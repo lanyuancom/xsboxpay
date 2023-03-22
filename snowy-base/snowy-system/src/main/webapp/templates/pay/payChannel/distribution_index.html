@@ -1,0 +1,136 @@
+<form id="addOrUpdateForm" lay-filter="addOrUpdateForm" class="layui-form model-form">
+    <div class="layui-form-item" style="margin-bottom: 0px">
+        <label class="layui-form-label layui-form-required">支付通道</label>
+        <div class="layui-input-block">
+            <table>
+                <tr>
+                    <td><label class="layui-form-label" style="width: 200px;">
+                        <input type="hidden" name="channelId" value="1" >
+                        名称：<span id="cname"></span></label>
+                    </td>
+                    <td><label class="layui-form-label">微信</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" id="checkbox_wxPay" name="wxPay" value="false" lay-skin="switch"
+                                   lay-filter="payTest" lay-text="开|关">
+                        </div>
+                    </td>
+                    <td><label class="layui-form-label">支付宝</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" id="checkbox_aliPay" name="aliPay" value="false" lay-skin="switch"
+                                   lay-filter="payTest" lay-text="开|关">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <fieldset class="fieldset-from">
+            <legend class="legend-fieldset-from" id="legend-div">
+                <div style="text-align: center;">分配商户</div>
+            </legend>
+            <div class="layui-input-block" id="de_mchInffo">
+
+            </div>
+        </fieldset>
+    </div>
+    <div class="layui-form-item text-right">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="formSubmitBtn" lay-submit>保存</button>
+    </div>
+</form>
+<script id="mchInfoScript" type="text/html">
+    <table>
+        <tr>
+        {{#  layui.each(d, function(index, item){
+            var ck = '';
+            if(item.check){
+                ck='checked';
+            }
+
+        }}
+
+            {{# if((index+1) % 5 != 0){ }}
+            <td>
+                <input type="checkbox" name="mchNos[{{ index}}]" {{ ck }} value="{{ item.mchNo }}"
+                       lay-skin="primary"
+                       title="{{ item.mchName }}">
+            </td>
+            {{#  } }}
+            {{# if((index+1) % 5 == 0){ }}
+                <tr></tr>
+                <tr>
+                    <td colspan="10">
+                        <hr>
+                    </td>
+                </tr>
+            {{#  } }}
+        {{#  }); }}
+        </tr>
+        {{#  if(d.length === 0){ }}
+        <tr><td>无数据</td></tr>
+        {{#  } }}
+    </table>
+</script>
+<script>
+    layui.use(['layer', 'form', 'admin', 'xnUtil', 'laytpl', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var xnUtil = layui.xnUtil;
+        var laytpl = layui.laytpl;
+        form.render('checkbox');
+        var editData = admin.getLayerData('#addOrUpdateForm').data;
+        editData.channelId=editData.id;
+        $("#cname").html(editData.name);
+        debugger
+        if(editData.wxPay){
+            $("#checkbox_wxPay").val(true)
+        }else{
+            $("#checkbox_wxPay").val(false)
+        }
+        if(editData.aliPay){
+            $("#checkbox_aliPay").val(true)
+        }else{
+            $("#checkbox_aliPay").val(false)
+        }
+        if (editData !== null && editData !== undefined) {
+            form.val('addOrUpdateForm', editData);
+        }
+        admin.req(getProjectUrl() + "mchChannel/findChannel?channelId="+editData.id, {}, function (res) {
+            var getTpl = mchInfoScript.innerHTML
+                ,view = document.getElementById('de_mchInffo');
+            laytpl(getTpl).render(res.data, function(html){
+                view.innerHTML = html;
+                form.render('checkbox');
+            });
+        }, 'get');
+
+        //监听指定开关
+        form.on('switch(payTest)', function (data) {
+            if (this.checked) {
+                $(this).val(true);
+            } else {
+                $(this).val(false);
+            }
+        });
+        /**
+         * 表单提交事件
+         */
+        form.on('submit(formSubmitBtn)', function (data) {
+            layer.load(2);
+            var f = xnUtil.serializeJson(data.form)
+            debugger
+            var url = getProjectUrl() + 'mchChannel/distribution';
+            admin.req(url, JSON.stringify(f), function (res) {
+                layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                    admin.closeDialog('#addOrUpdateForm');
+                });
+            }, 'post');
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

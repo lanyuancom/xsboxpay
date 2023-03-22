@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>工作台</title>
+    <link rel="stylesheet" href="${ctxPath}/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="${ctxPath}/assets/module/admin.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        /** 应用快捷块样式 */
+        .console-app-group {
+            padding: 16px;
+            border-radius: 4px;
+            text-align: center;
+            background-color: #fff;
+            cursor: pointer;
+            display: block;
+        }
+
+        .console-app-group .console-app-icon {
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            margin-bottom: 6px;
+            display: inline-block;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            font-size: 32px;
+            color: #69c0ff;
+        }
+
+        .console-app-group:hover {
+            box-shadow: 0 0 15px rgba(0, 0, 0, .08);
+        }
+
+        /** //应用快捷块样式 */
+
+        /** 小组成员 */
+        .console-user-group {
+            position: relative;
+            padding: 10px 0 10px 60px;
+        }
+
+        .console-user-group .console-user-group-head {
+            width: 32px;
+            height: 32px;
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            margin-top: -16px;
+            border-radius: 50%;
+        }
+
+        .console-user-group .layui-badge {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            margin-top: -10px;
+        }
+
+        .console-user-group .console-user-group-name {
+            line-height: 1.2;
+        }
+
+        .console-user-group .console-user-group-desc {
+            color: #8c8c8c;
+            line-height: 1;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /** 卡片轮播图样式 */
+        .admin-carousel .layui-carousel-ind {
+            position: absolute;
+            top: -41px;
+            text-align: right;
+        }
+
+        .admin-carousel .layui-carousel-ind ul {
+            background: 0 0;
+        }
+
+        .admin-carousel .layui-carousel-ind li {
+            background-color: #e2e2e2;
+        }
+
+        .admin-carousel .layui-carousel-ind li.layui-this {
+            background-color: #999;
+        }
+
+        /** 广告位轮播图 */
+        .admin-news .layui-carousel-ind {
+            height: 45px;
+        }
+
+        .admin-news a {
+            display: block;
+            line-height: 70px;
+            text-align: center;
+        }
+
+        /** 最新动态时间线 */
+        .layui-timeline-dynamic .layui-timeline-item {
+            padding-bottom: 0;
+        }
+
+        .layui-timeline-dynamic .layui-timeline-item:before {
+            top: 16px;
+        }
+
+        .layui-timeline-dynamic .layui-timeline-axis {
+            width: 9px;
+            height: 9px;
+            left: 1px;
+            top: 7px;
+            background-color: #cbd0db;
+        }
+
+        .layui-timeline-dynamic .layui-timeline-axis.active {
+            background-color: #0c64eb;
+            box-shadow: 0 0 0 2px rgba(12, 100, 235, .3);
+        }
+
+        .dynamic-card-body {
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .dynamic-card-body:hover {
+            overflow-y: auto;
+            padding-right: 9px;
+        }
+
+        /** 优先级徽章 */
+        .layui-badge-priority {
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            padding: 0;
+            line-height: 18px;
+            border-width: 2px;
+            font-weight: 600;
+        }
+        .xs-bg-qing-green .layui-card-header{
+            color: white;
+        }
+        .xs-bg-blue .layui-card-header{
+            color: white;
+        }
+        .xs-bg-tian-lan .layui-card-header{
+            color: white;
+        }
+        .xs-bg-fen .layui-card-header{
+            color: white;
+        }
+        .xs-bg-cheng .layui-card-header{
+            color: white;
+        }
+        .xs-bg-green .layui-card-header{
+            color: white;
+        }
+        .xs-bg-qing-green{
+            background: #40D4B0;
+            color: white;
+        }
+        .xs-bg-blue{
+            background: #55A5EA;
+            color: white;
+        }
+        .xs-bg-tian-lan{
+            background: #9DAFFF;
+            color: white;
+        }
+        .xs-bg-fen{
+            background: #F591A2;
+            color: white;
+        }
+        .xs-bg-cheng{
+            background: #FEAA4F;
+            color: white;
+        }
+        .xs-bg-green{
+            background: #9BC539;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<!-- 正文开始 -->
+<div class="layui-fluid ew-console-wrapper" style="padding: 8px">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header" style="font-size: 19px;font-weight: 600;">近一分钟提交 <span style="color: red" id="minute_count"></span> 订单，成单率 <span style="color: red" id="minute_rate"></span> %  <a style="height: 25px;line-height: 25px; font-size: 14px;margin-top: -5px;" class="layui-btn layui-btn-xs" id="minute_btn">&nbsp;刷&nbsp;&nbsp;新&nbsp;</a>
+                <span style="font-size: 14px;"><span id="sec_min" style="color: red"></span>&nbsp;秒后自动刷新</span></div>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-sm6 layui-col-md3">
+            <div class="layui-card xs-bg-qing-green">
+                <div class="layui-card-header">
+                    订单量 / 成单率<span class="layui-badge layui-badge-green pull-right">今天</span>
+                </div>
+                <div class="layui-card-body">
+                    <p class="lay-big-font"><span id="day_count">0</span>&nbsp;笔 / <span id="day_rate">0</span>&nbsp;% </p>
+                    <p>历史总订单量<span class="pull-right"><span id="totalOrder">0</span>&nbsp;笔 / <span id="totalOrderRate">0</span>&nbsp;%</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-sm6 layui-col-md3">
+            <div class="layui-card xs-bg-qing-green">
+                <div class="layui-card-header">
+                    成功收单&nbsp;/&nbsp;成功率<span class="layui-badge layui-badge-green pull-right">今天</span>
+                </div>
+                <div class="layui-card-body">
+                    <p class="lay-big-font"><span style="font-size: 26px;line-height: 1;">¥&nbsp;<span id="day_succ_amount">0</span>&nbsp;/&nbsp;<span id="day_amount_rate">0</span>&nbsp;% </p>
+                    <p>历史收单&nbsp;/&nbsp;成功率<span class="pull-right" id="day_total_succ_amount_rate">0</span><span class="pull-right"><span id="day_total_succ_amount">0</span>&nbsp;/&nbsp;</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-sm6 layui-col-md3">
+            <div class="layui-card xs-bg-blue">
+                <div class="layui-card-header">
+                    订单量 / 成单率<span class="layui-badge layui-badge-blue pull-right">昨天</span>
+                </div>
+                <div class="layui-card-body">
+                    <p class="lay-big-font"><span id="yesday_count">0</span>&nbsp;笔 / <span id="yesday_count_rate">0</span>&nbsp;% </p>
+                    <p>历史总订单量<span class="pull-right"><span id="yestotalOrder">0</span>&nbsp;笔 / <span id="yestotalOrderRate">0</span>&nbsp;%</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-sm6 layui-col-md3">
+            <div class="layui-card xs-bg-blue">
+                <div class="layui-card-header">
+                    &nbsp;成功收单/&nbsp;成功率<span class="layui-badge layui-badge-blue pull-right">昨天</span>
+                </div>
+                <div class="layui-card-body">
+                    <p class="lay-big-font"><span style="font-size: 26px;line-height: 1;">¥&nbsp;<span id="yesday_succ_amount">0</span>&nbsp;/&nbsp;<span id="yesday_amount_rate">0</span>&nbsp;%</p>
+                    <p>历史收单&nbsp;/&nbsp;成功率<span class="pull-right" id="yesday_total_succ_amount_rate">0</span><span class="pull-right"><span id="yesday_total_succ_amount">0</span>&nbsp;/&nbsp;</span></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header">历史订单趋势
+                                <div class="layui-btn-group" style="margin-left: 50px">
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " name="dataPick" data-obj="1">最近1天</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " name="dataPick" data-obj="3">最近3天</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " name="dataPick" data-obj="7">最近7天</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " name="dataPick" data-obj="30">最近30天</button>
+                                </div>
+                                <div class="layui-inline" id="orgcode-date">
+                                    <div style="float: left;font-weight: 500">
+                                    自定义选择：</div>
+                                    <div class="layui-input-inline" style="float: left;margin-top: 8px;">
+                                        <input name="historyStart" type="text" autocomplete="off" id="test-startDate-1" class="layui-input" placeholder="开始日期">
+                                    </div>
+                                    <div class="layui-form-mid" style="padding:initial">&nbsp;&nbsp;-</div>
+                                    <div class="layui-input-inline" style="float: left;margin-top: 8px;">
+                                        <input name="historyEnd" type="text" autocomplete="off" id="test-endDate-1" class="layui-input" placeholder="结束日期">
+                                    </div>
+                                </div>
+                                <a style="margin-top: -5px;" class="layui-btn layui-btn-xs" id="hour_btn">&nbsp;查&nbsp;&nbsp;询&nbsp;</a>
+                            </div>
+                        <div class="layui-card-body" style="height: 240px;overflow: hidden;">
+                            <div id="history_myCharts" style="width: 100%;height: 260px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card">
+                        <div class="layui-card-header">当天订单趋势</div>
+                        <div class="layui-card-body" style="height: 240px;overflow: hidden;">
+                            <div id="count_myCharts" style="width: 100%;height: 260px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card">
+                        <div class="layui-card-header">当天金额趋势</div>
+                        <div class="layui-card-body" style="height: 240px;overflow: hidden;">
+                            <div id="count_amount_myCharts" style="width: 100%;height: 260px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .layui-input{
+        height: 23px;
+    }
+</style>
+<!-- js部分 -->
+<script src="${ctxPath}/assets/libs/layui/layui.js"></script>
+<script src="${ctxPath}/assets/js/common.js"></script>
+<script src="${ctxPath}/assets/libs/echarts/echarts.min.js"></script>
+<script src="${ctxPath}/assets/libs/echarts/echartsTheme.js"></script>
+<script>
+    layui.use(['layer','table', 'laydate', 'xnUtil','util'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        //渲染日期组件
+
+        $("#minute_btn").click(function(){
+            minuteRate();
+        });
+        $("#hour_btn").click(function(){
+            hour_btn();
+            $("[data-obj]").addClass("layui-btn-primary");
+        });
+        $("[data-obj]").click(function(){
+            var param = $(this).attr("data-obj");
+            $(this).parent().find("button").addClass("layui-btn-primary");
+            $(this).removeClass("layui-btn-primary");
+            //当前时间
+            var nowDate = new Date();
+            var et = util.toDateString(nowDate,'yyyy-MM-dd');
+            $("#test-endDate-1").val(et);
+            switch (param){
+                case '1':
+                    //当前时间减去1天
+                    $("#test-startDate-1").val(et);
+
+                    break;
+                case '3':
+                    //当前时间减去1天
+                    var aimDate = new Date(nowDate.setDate(nowDate.getDate()-3));
+                    var st = util.toDateString(aimDate,'yyyy-MM-dd');
+                    $("#test-startDate-1").val(st);
+                    break;
+                case '7':
+                    //当前时间减去1天
+                    var aimDate = new Date(nowDate.setDate(nowDate.getDate()-7));
+                    var st = util.toDateString(aimDate,'yyyy-MM-dd');
+                    $("#test-startDate-1").val(st);
+                    break;
+                case '30':
+                    //当前时间减去1天
+                    var aimDate = new Date(nowDate.setDate(nowDate.getDate()-30));
+                    var st = util.toDateString(aimDate,'yyyy-MM-dd');
+                    $("#test-startDate-1").val(st);
+                    break;
+            }
+            hour_btn();
+        });
+
+        minuteRate();
+        function minuteRate(){
+            admin.req(getProjectUrl() + 'payIndex/minuteRate', function(res){
+                $("#minute_count").html(res.data.count);
+                $("#minute_rate").html(res.data.rate);
+            }, 'get');
+        }
+
+        setInterval(function(){
+            minuteRate();
+        },60000);//60秒后返回首页
+        var i = 60;
+        setInterval(function(){
+            if(i<0){
+                i = 60;
+            }
+            $("#sec_min").html(i--);
+        },1000);//5秒后返回首页
+        admin.req(getProjectUrl() + 'payIndex/dayTotal', function(res){
+
+
+
+            $("#day_rate").html(((res.data.day_succ_count / res.data.day_count)*100).toFixed(2));
+            $("#day_count").html(res.data.day_count);
+
+            $("#totalOrder").html(res.data.count);
+            $("#totalOrderRate").html(res.data.rate);
+            $("#yestotalOrder").html(res.data.count);
+            $("#yestotalOrderRate").html(res.data.rate);
+
+
+            $("#day_amount_rate").html(((res.data.day_succ_amount / res.data.day_count_amount)*100).toFixed(2));
+            $("#day_count_amount").html(res.data.day_count_amount);
+            $("#day_succ_amount").html(res.data.day_succ_amount);
+
+            $("#day_total_succ_amount").html(res.data.succ_amount);
+            $("#day_total_succ_amount_rate").html(((res.data.succ_amount / res.data.count_amount)*100).toFixed(2)+'&nbsp;%');
+
+            $("#yesday_total_succ_amount").html(res.data.succ_amount);
+            $("#yesday_total_succ_amount_rate").html(((res.data.succ_amount / res.data.count_amount)*100).toFixed(2)+'&nbsp;%');
+
+
+
+            $("#yesday_count").html(res.data.yesday_count);
+            $("#yesday_count_rate").html(((res.data.yesday_succ_count / res.data.yesday_count)*100).toFixed(2));
+
+            $("#yesday_amount_rate").html(((res.data.yesday_succ_amount / res.data.yesday_count_amount)*100).toFixed(2));
+            $("#yesday_count_amount").html(res.data.yesday_count_amount);
+            $("#yesday_succ_amount").html(res.data.yesday_succ_amount);
+
+            $("#dayDivision").html(res.data.day_succ_division_amount);
+            $("#totalDivision").html(res.data.succ_division_amount);
+        }, 'post');
+
+        var history_myCharts = echarts.init(document.getElementById('history_myCharts'), myEchartsTheme);
+// 渲染活动情况预测
+        var count_myCharts = echarts.init(document.getElementById('count_myCharts'), myEchartsTheme);
+        var count_amount_myCharts = echarts.init(document.getElementById('count_amount_myCharts'), myEchartsTheme);
+
+        //当前时间
+        var nowDate = new Date();
+        var et = util.toDateString(nowDate,'yyyy-MM-dd');
+        laydate.render({ elem: '#test-endDate-1', trigger: 'click' ,value:et });
+        //当前时间减去1天
+        var aimDate = new Date(nowDate.setDate(nowDate.getDate()-30));
+        var st = util.toDateString(aimDate,'yyyy-MM-dd');
+
+        laydate.render({ elem: '#test-startDate-1', trigger: 'click',value:st });
+        hour_btn();
+        function hour_btn(){
+            var startDate = $('#test-startDate-1').val();
+            if(startDate == null || startDate ==""){
+                startDate = st;
+            }
+            var endDate = $('#test-endDate-1').val();
+            if(endDate == null || endDate ==""){
+                endDate = et;
+            }
+            admin.req(getProjectUrl() + 'payIndex/minute?tag=1&sTime='+ startDate+"&eTime="+ endDate, function(res){
+                var d =res.data;
+                var xAxis = [];
+                var count = [];
+                var count_amount = [];
+                $.each(d, function(j) {
+                    xAxis[j] = d[j].minute_time;
+                    count[j] = d[j].count;
+                    count_amount[j] = d[j].count_amount;
+                })
+                var count_option = {
+                    tooltip : {
+                        trigger: 'axis',
+                    },
+                    grid:{
+                        x:40,
+                        y:30,
+                        x2:20,
+                        y2:40,
+                        borderWidth:1
+                    },
+                    xAxis: [{
+                        type: "category",
+                        boundaryGap: !1,
+                        data: xAxis
+                    }],
+                    yAxis: [{
+                        name: "金额",
+                        type: "value"
+                    },{
+                        name: "订单量",
+                        type: "value"
+                    }],
+                    series: [{
+                        name: "金额",
+                        type: "line",
+                        data: count_amount
+                    },{
+                        name: "订单量",
+                        type: "line",
+                        yAxisIndex: 1,  // 配置多个y轴
+                        data: count
+                    }]
+                };
+                history_myCharts.setOption(count_option);
+
+            }, 'get');
+        }
+        admin.req(getProjectUrl() + 'payIndex/minute', function(res){
+            var d =res.data;
+            var xAxis = [];
+            var count = [];
+            var count_amount = [];
+            $.each(d, function(j) {
+                xAxis[j] = d[j].minute_time;
+                count[j] = d[j].count;
+                count_amount[j] = d[j].count_amount;
+            })
+            var count_option = {
+                tooltip : {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                grid:{
+                    x:30,
+                    y:10,
+                    x2:20,
+                    y2:40,
+                    borderWidth:1
+                },
+                xAxis: [{
+                    type: "category",
+                    boundaryGap: !1,
+                    data: xAxis
+                }],
+                yAxis: [{
+                    type: "value"
+                }],
+                series: [{
+                    name: "订单量",
+                    type: "line",
+                    smooth: !0,
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: "default"
+                            }
+                        }
+                    },
+                    data: count
+                }]
+            };
+            count_myCharts.setOption(count_option);
+
+            var count_amount_option = {
+                tooltip: {
+                    trigger: "axis"
+                },
+                grid:{
+                    x:30,
+                    y:10,
+                    x2:20,
+                    y2:40,
+                    borderWidth:1
+                },
+                xAxis: [{
+                    type: "category",
+                    boundaryGap: !1,
+                    data: xAxis
+                }],
+                yAxis: [{
+                    type: "value"
+                }],
+                series: [{
+                    name: "金额",
+                    type: "line",
+                    smooth: !0,
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: "default"
+                            }
+                        }
+                    },
+                    data: count_amount
+                }]
+            };
+            count_amount_myCharts.setOption(count_amount_option);
+        }, 'get');
+
+
+
+        // 动态改变图表1数据
+        /*setInterval(function () {
+            for (var i = 0; i < mData.length; i++) {
+                mData[i] += (Math.random() * 50 - 25);
+                if (mData[i] < 0) {
+                    mData[i] = 0;
+                }
+            }
+            myCharts.setOption({
+                series: [{
+                    data: mData
+                }]
+            });
+        }, 1000);*/
+        
+    });
+</script>
+</body>
+</html>

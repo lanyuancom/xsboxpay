@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>商户进件</title>
+    <link rel="stylesheet" href="${ctxPath}/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="${ctxPath}/assets/module/admin.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!-- 正文开始 -->
+<div class="layui-fluid" style="padding: 8px;">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!-- 表格工具栏 -->
+            <form class="layui-form toolbar">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">商户号:</label>
+                        <div class="layui-input-inline">
+                            <input name="merNo" class="layui-input" placeholder="请输入商户号"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">法人姓名:</label>
+                        <div class="layui-input-inline">
+                            <input name="legarName" class="layui-input" placeholder="请输入法人姓名"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">法人手机号:</label>
+                        <div class="layui-input-inline">
+                            <input name="legarPhone" class="layui-input" placeholder="请输入法人手机号"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开启状态:</label>
+                        <div class="layui-input-inline">
+                            <select name="status"></select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">&emsp;
+                        <button class="layui-btn icon-btn" lay-filter="tableSearch" lay-submit>
+                            <i class="layui-icon">&#xe615;</i>搜索
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary icon-btn">
+                            <i class="layui-icon">&#xe669;</i>重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- 数据表格 -->
+            <table id="dataTable" lay-filter="dataTable"></table>
+        </div>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="tableBar">
+    <a class="layui-btn layui-btn-xs" perm-show="mchPiecesInfo:copy" lay-event="copy">复用</a><br/>
+   <a class="layui-btn layui-btn-primary layui-btn-xs" perm-show="mchPiecesInfo:edit" lay-event="edit">编辑</a><br/>
+   <a class="layui-btn layui-btn-danger layui-btn-xs" perm-show="mchPiecesInfo:delete" lay-event="delete">删除</a>
+</script>
+<!-- js部分 -->
+<script src="${ctxPath}/assets/libs/layui/layui.js"></script>
+<script src="${ctxPath}/assets/js/common.js"></script>
+<style>
+    .layui-table-cell{
+        overflow:visible;
+        text-overflow:inherit;
+        white-space:normal;
+        height: auto;/*在这里设置行高没用*/
+        word-break: break-all;
+    }
+</style>
+<script>
+    layui.use(['layer', 'table', 'tableX', 'notice', 'xnUtil', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var table = layui.table;
+        var tableX = layui.tableX;
+        var admin = layui.admin;
+        var form = layui.form;
+        var notice = layui.notice;
+        var xnUtil = layui.xnUtil;
+        var laydate = layui.laydate;
+
+        // 渲染字典下拉
+        xnUtil.rendDictDropDown(null, 'status', 'common_status', '请选择状态', null);
+
+        /* 渲染表格 */
+        var insTb = tableX.render({
+            elem: '#dataTable',
+            url: getProjectUrl() + 'mchPiecesInfo/page',
+            page: true,
+            toolbar: ['<p>',
+                '<button lay-event="add" perm-show="mchPiecesInfo:add" class="layui-btn layui-btn-sm icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>&nbsp;',
+                '<button lay-event="delete" perm-show="mchPiecesInfo:delete" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
+                '</p>'].join(''),
+            cellMinWidth: 100,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field: 'subUserNo', title: '子商户'},
+                    {field: 'todayAmount',width: 150, title: '收款情况(元)',
+                        templet: function (d) {
+                            return "今天收款："+formatMoney(d.toDayAmount)+"<br/>昨天收款："+formatMoney(d.yesToDayAmount)+"<br/>总收款："+formatMoney(d.countAmount);
+                        }
+                    },
+                    {field: 'maxAmount', title: '收款上限'},
+                    //草稿：DRAFT , 待审核：PREAUDIT , 审核中：AUDITING , 审核通过：AUDITED, 审核未通过：UNAUDIT
+                    {field: 'piecesStatus',width: 110, title: '审核状态', templet: function (detailData) {
+                            /*1、APPLYMENT_STATE_EDITTING（编辑中）：提交申请发生错误导致，请尝试重新提交。
+                            2、APPLYMENT_STATE_AUDITING（审核中）：申请单正在审核中，超级管理员用微信打开“签约链接”，完成绑定微信号后，申请单进度将通过微信公众号通知超级管理员，引导完成后续步骤。
+                            3、APPLYMENT_STATE_REJECTED（已驳回）：请按照驳回原因修改申请资料，超级管理员用微信打开“签约链接”，完成绑定微信号，后续申请单进度将通过微信公众号通知超级管理员。
+                            4、APPLYMENT_STATE_TO_BE_CONFIRMED（待账户验证）：请超级管理员使用微信打开返回的“签约链接”，根据页面指引完成账户验证。
+                            5、APPLYMENT_STATE_TO_BE_SIGNED（待签约）：请超级管理员使用微信打开返回的“签约链接”，根据页面指引完成签约。
+                            6、APPLYMENT_STATE_SIGNING（开通权限中）：系统开通相关权限中，请耐心等待。
+                            7、APPLYMENT_STATE_FINISHED（已完成）：商户入驻申请已完成。
+                            8、APPLYMENT_STATE_CANCELED（已作废）：申请单已被撤销。 */
+                            var ps = detailData.piecesStatus == "APPLYMENT_STATE_EDITTING"?'<span class="layui-badge layui-badge-gray">草稿</span>':detailData.piecesStatus == "APPLYMENT_STATE_TO_BE_SIGNED"?'' +
+                                '<span class="layui-badge layui-badge-yellow">待签约</span>':detailData.piecesStatus == "APPLYMENT_STATE_AUDITING"?'' +
+                                '<span class="layui-badge layui-badge-yellow">审核中</span>':detailData.piecesStatus == "APPLYMENT_STATE_FINISHED"?'' +
+                                '<span class="layui-badge layui-badge-green">审核通过</span>':detailData.piecesStatus == "APPLYMENT_STATE_TO_BE_CONFIRMED"?'' +
+                                '<span class="layui-badge layui-badge-green">待账户验证</span>':detailData.piecesStatus == "APPLYMENT_STATE_SIGNING"?'' +
+                                '<span class="layui-badge layui-badge-green">通权限中</span>':detailData.piecesStatus == "APPLYMENT_STATE_CANCELED"?'' +
+                                '<span class="layui-badge layui-badge-green">已作废</span>':detailData.piecesStatus == "APPLYMENT_STATE_REJECTED"?'' +
+                                '<span class="layui-badge layui-badge-red">已驳回</span>':'<span class="layui-badge layui-badge-red">未知</span>';
+                            return "<span id=\""+detailData.id+"_piecesStatus_table\">"+ps+"</span><br><button obj-data=\""+detailData.id+","+detailData.subUserNo+"\" class=\"piecesStatusRefresh layui-btn layui-btn-xs icon-btn\"><i class=\"layui-icon\">&#xe615;</i>刷新</button>";
+                        }
+                    },
+                    {field: 'status', title: '启用状态', templet: function (d) {
+                            //var v = xnUtil.rendDataTableDict(d.status, 'common_status');
+                            var c = "";
+                            if(d.status == 0){
+                                c = "checked";
+                            }
+                            var st = "<input type=\"checkbox\" lay-text=\"开启|关闭\" value=\""+d.id+"\" lay-filter=\"common_status\" "+c+" lay-skin=\"switch\">";
+                            return st;
+                        }
+                    },
+                    {field: 'businessShortName', title: '商户简称'},
+                    {field: 'netType', title: '名称',
+                        templet: function (d) {
+                            return d.netType == "PERSON" ? d.legarName:d.businessFullName;
+                        }
+                    },
+                    {field: 'legarName',width: 180,  title: '法人信息',
+                        templet: function (d) {
+                            return d.legarName+"<br/>"+d.legarPhone+"<br/>"+d.legarCard;
+                        }
+                    },
+                    {field: 'frontCard', title: '正反面',
+                        templet: function (d) {
+                            var img = "<span class='layer-photos-img'><img src='"+getProjectUrl() + "sysFileInfo/preview?id=" +d.frontCard+"' width='60'/><br/>";
+                                img +="<img src='"+getProjectUrl() + "sysFileInfo/preview?id="+d.backCard+"' width='60'/><br/>";
+                                if(d.netType == "CORP_CODE"){
+                                    img +="<img src='"+getProjectUrl() + "sysFileInfo/preview?id="+d.businessFront+"' width='60'/><br/>";
+                                    img +="<img src='"+getProjectUrl() + "sysFileInfo/preview?id="+d.businessAccountLicense+"' width='60'/><br/>";
+                                }
+                                img +="</span>";
+                                return img;
+                        }
+                    },
+                   /* {field: 'subUserProvince', title: '经营地址',
+                        templet: function (d) {
+                            return d.subUserProvince+"&nbsp;/&nbsp;"+d.subUserCity+"&nbsp;/&nbsp;"+d.subUserDistrict;
+                        }
+                    },*/
+                    {field: 'bankName', title: '银行名称'},
+                    {field: 'bankNo', title: '银行卡'},
+                    {field: 'bankProvince', title: '银行地址',
+                        templet: function (d) {
+                            return d.bankProvince+"&nbsp;/&nbsp;"+d.bankCity+"&nbsp;/&nbsp;"+d.bankDistrict;
+                        }
+                    },
+                    {field: 'createTime',width: 170, title: '进件时间'},
+                    {title: '操作', toolbar: '#tableBar', align: 'center', width: 120}
+                ]
+            ],
+            done: function(res, curr, count) {
+                xnUtil.tableDone(insTb, res, curr, count);
+                // 该方法用于解决,使用fixed固定列后,行高和其他列不一致的问题
+                $(".layui-table-main  tr").each(function (index, val) {
+                    $($(".layui-table-fixed .layui-table-body tbody tr")[index]).height($(val).height());
+                });
+                $(".piecesStatusRefresh").click(function(){
+                    var obj = $(this).attr("obj-data").split(",");
+                    admin.req(getProjectUrl() +'mchPiecesInfo/piecesStatusRefresh?id='+obj[0]+'&subUserNo='+obj[1] , null, function(res){
+                        var ps = res.data.piecesStatus == "APPLYMENT_STATE_EDITTING"?'<span class="layui-badge layui-badge-gray">草稿</span>':res.data.piecesStatus == "APPLYMENT_STATE_TO_BE_SIGNED"?'' +
+                            '<span class="layui-badge layui-badge-yellow">待签约</span>':res.data.piecesStatus == "APPLYMENT_STATE_AUDITING"?'' +
+                            '<span class="layui-badge layui-badge-yellow">审核中</span>':res.data.piecesStatus == "APPLYMENT_STATE_FINISHED"?'' +
+                            '<span class="layui-badge layui-badge-green">审核通过</span>':res.data.piecesStatus == "APPLYMENT_STATE_TO_BE_CONFIRMED"?'' +
+                            '<span class="layui-badge layui-badge-green">待账户验证</span>':res.data.piecesStatus == "APPLYMENT_STATE_SIGNING"?'' +
+                            '<span class="layui-badge layui-badge-green">通权限中</span>':res.data.piecesStatus == "APPLYMENT_STATE_CANCELED"?'' +
+                            '<span class="layui-badge layui-badge-green">已作废</span>':res.data.piecesStatus == "APPLYMENT_STATE_REJECTED"?'' +
+                            '<span class="layui-badge layui-badge-red">已驳回</span>':'<span class="layui-badge layui-badge-red">未知</span>';
+                        $("#"+obj[0]+"_piecesStatus_table").html(ps);
+                        if(res.data.remark != undefined && res.data.remark != ""){
+                            layer.alert(res.data.remark)
+                        }
+                    }, 'get');
+                });
+                //调用示例
+                layer.photos({
+                    photos: '.layer-photos-img',
+                    anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                });
+            }
+        });
+
+        form.on('switch(common_status)', function(data){
+            //console.log(data.elem); //得到checkbox原始DOM对象
+            //console.log(data.elem.checked); //开关是否开启，true或者false
+            //console.log(data.value); //开关value值，也可以通过data.elem.value得到
+            //console.log(data.othis); //得到美化后的DOM对象
+            var v = data.elem.checked ? 0:1;
+            admin.req(getProjectUrl() + 'mchPiecesInfo/update', JSON.stringify({'id': data.value,'status': v}), function(res){
+                layer.msg(res.message);
+            }, 'post');
+        });
+
+
+        /* 表格搜索 */
+        form.on('submit(tableSearch)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+            return false;
+        });
+
+        /* 表格工具条点击事件 */
+        table.on('tool(dataTable)', function (obj) {
+            debugger
+            if (obj.event === 'copy') { // 添加
+                layer.prompt({
+                    formType: 3,
+                    placeholder: '输入简称',
+                    title: '进件复用',
+//                    area: ['800px', '350px'] //自定义文本域宽高
+                }, function(value, index, elem){
+                    /* if(value===""){
+                         layer.msg("请填写注销原因")
+                         return;
+                     }
+                     */
+                    var data2=$('#zxr').val() ;
+                    var data = {"id":obj.data.id,"businessShortName":value,"legarPhone":data2};
+                    admin.req(getProjectUrl() + 'mchPiecesInfo/copy', JSON.stringify(data), function(res){
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                            layer.close(index);
+                        });
+                    }, 'post');
+
+                });
+                $(".layui-layer-prompt .layui-layer-content").find("input").eq(0).attr("placeholder",'输入简称');
+                $(".layui-layer-prompt .layui-layer-content").append("<br/><input type=\"text\" id= \"zxr\" class=\"layui-input\" placeholder=\"输入手机号\"/>")
+                //$(".layui-layer-content").append("<br/><input type=\"text\" id= \"zxr2\" class=\"layui-input\" placeholder=\"输入注销人\"/>")
+            }
+            /* 删除 */
+            if (obj.event === 'delete') {
+                layer.confirm('确定要操作该数据吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function () {
+                    admin.req(getProjectUrl() + 'mchPiecesInfo/delete', JSON.stringify([{'id': obj.data.id}]), function(res){
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                        });
+                    }, 'post');
+                });
+            }
+            /* 编辑 */
+            if (obj.event === 'edit') {
+                showAddOrUpdateModel(obj.data);
+            }
+        });
+
+        /* 表格头工具栏点击事件 */
+        table.on('toolbar(dataTable)', function (obj) {
+            if (obj.event === 'add') { // 添加
+                showAddOrUpdateModel();
+            }
+
+            if (obj.event === 'delete') { // 删除
+                var checkRows = table.checkStatus('dataTable');
+                if (checkRows.data.length === 0) {
+                    notice.msg('请选择要操作的数据', {icon: 2});
+                    return;
+                }
+                layer.confirm('确定要操作该数据吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function () {
+                    var ids = checkRows.data.map(function (d) {
+                        return {"id": d.id};
+                    });
+                    admin.req(getProjectUrl() + 'mchPiecesInfo/delete', JSON.stringify(ids), function(res){
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                        });
+                    }, 'post');
+                });
+            }
+        });
+
+        // 显示表单弹窗
+        function showAddOrUpdateModel(data) {
+            var layIndex = admin.open({
+                title: (data ? '修改' : '添加') + '商户进件',
+                url: getProjectUrl() + 'mchPiecesInfo/form',
+                area: ['1300px','AUTO'],
+                data: { data: data },     // 传递数据到表单页面
+                end: function () {
+                    var layerData = admin.getLayerData(layIndex, 'formOk');
+                    if (layerData) {  // 判断表单操作成功标识
+                        insTb.reload();  // 成功刷新表格
+                    }
+                },
+                success: function (layero, dIndex) {
+                    // 弹窗超出范围不出现滚动条
+                    $(layero).children('.layui-layer-content').css('overflow', 'visible');
+                    $(layero).children('.layui-layer-content').css('height', 'auto');
+                    $(layero).find('[lay-submit]').focus();
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

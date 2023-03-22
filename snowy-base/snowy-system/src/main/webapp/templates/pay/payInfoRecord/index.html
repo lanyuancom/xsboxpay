@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>打款记录</title>
+    <link rel="stylesheet" href="${ctxPath}/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="${ctxPath}/assets/module/admin.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<style type="text/css">
+    .fieldset-from {
+        border: 1px dashed rgb(30 144 255 / 55%);
+    }
+
+    .legend-fieldset-from {
+        border: 1px dashed rgb(30 144 255 / 55%);
+        font-family: 隶书;
+        width: 100px;
+        color: #999;
+        color: dodgerblue;
+        padding: 5px;
+        cursor: pointer;
+    }
+</style>
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <fieldset class="fieldset-from">
+                    <legend class="legend-fieldset-from" id="pay-legend-div">
+                        <div style="text-align: center;">转账到支付宝</div>
+                    </legend>
+                    <div id="pay-fielde-div">
+                        <!-- 表格工具栏 -->
+                        <form id="pay-form" class="layui-form toolbar" style="font-size: 20px;font-weight: 700">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 150px;">选择付款的应用</label>
+                                    <div class="layui-input-inline" style="width: 550px">
+                                        <select name="pay_app" lay-verify="required" required></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 150px;">选择标签</label>
+                                    <div class="layui-input-inline" style="width: 550px">
+                                        <select name="pay_tag" lay-verify="required" lay-filter="pay_tag" required></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 150px;">对方账号:</label>
+                                    <div class="layui-input-inline" style="width: 250px;">
+                                        <input name="account" class="layui-input" placeholder="请输入对方账号" lay-verify="required" required/>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 100px;">对方姓名:</label>
+                                    <div class="layui-input-inline" style="width: 200px;">
+                                        <input name="name" class="layui-input" placeholder="请输入对方姓名" lay-verify="required" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 150px;">金额:</label>
+                                    <div class="layui-input-inline" style="width: 250px;">
+                                        <input name="amount" class="layui-input" placeholder="请输入金额" lay-verify="required" required/>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 100px;">安全码:</label>
+                                    <div class="layui-input-inline" style="width: 200px;">
+                                        <input name="code" class="layui-input" placeholder="请输入安全码" lay-verify="required" required/>
+                                    </div>
+                                </div>
+
+                            </div>-->
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 150px;">转账账号</label>
+                                    <div class="layui-input-inline" style="width: 550px" id="transfer-div">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 150px;">金额:</label>
+                                    <div class="layui-input-inline" style="width: 250px;">
+                                        <input name="amount" class="layui-input" placeholder="请输入金额" lay-verify="required" required/>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="width: 100px;">安全码:</label>
+                                    <div class="layui-input-inline" style="width: 200px;">
+                                        <input name="code" class="layui-input" placeholder="请输入安全码" lay-verify="required" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button style="width: 100%" class="layui-btn icon-btn" id="pay-btn" lay-filter="paySearch" lay-submit>
+                                    <i class="layui-icon">&#xe615;</i>确认转账
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="layui-form-item">
+                <fieldset class="fieldset-from">
+                    <legend class="legend-fieldset-from" id="page-legend-div">
+                        <div style="text-align: center;">打款记录</div>
+                    </legend>
+                    <div id="page-fielde-div">
+                        <!-- 表格工具栏 -->
+                        <form class="layui-form toolbar">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">账号:</label>
+                                    <div class="layui-input-inline">
+                                        <input name="account" class="layui-input" placeholder="请输入账号"/>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">姓名:</label>
+                                    <div class="layui-input-inline">
+                                        <input name="name" class="layui-input" placeholder="请输入姓名"/>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">&emsp;
+                                    <button class="layui-btn icon-btn" lay-filter="tableSearch" lay-submit>
+                                        <i class="layui-icon">&#xe615;</i>搜索
+                                    </button>
+                                    <button type="reset" class="layui-btn layui-btn-primary icon-btn">
+                                        <i class="layui-icon">&#xe669;</i>重置
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- 数据表格 -->
+                        <table id="dataTable" lay-filter="dataTable"></table>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="tableBar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" perm-show="payInfoRecord:edit" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" perm-show="payInfoRecord:delete" lay-event="delete">删除</a>
+</script>
+<div id="qrdiv" style="display: none;text-align: center">
+    <img src="" id="qrimg"/>
+    <div style="font-size: 20px;color: red;font-weight: 700;">注意：24小时后，需要重新绑定！</div>
+</div>
+<!-- js部分 -->
+<script src="${ctxPath}/assets/libs/layui/layui.js"></script>
+<script src="${ctxPath}/assets/js/common.js"></script>
+<script>
+    layui.use(['layer', 'table', 'tableX', 'notice', 'xnUtil', 'transfer' ], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var table = layui.table;
+        var tableX = layui.tableX;
+        var admin = layui.admin;
+        var form = layui.form;
+        var notice = layui.notice;
+        var xnUtil = layui.xnUtil;
+        var transfer = layui.transfer;
+        /*$("#pay-code-btn").click(function(){
+            var qr = getProjectUrl() + 'generateQRCode/imgs';
+            $("#qrimg").attr("src",qr);
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['350px', '400px'], //宽高
+                btnAlign: 'c',
+                content: $("#qrdiv") ,
+                btn: ['确认', '取消'],
+                success:function(){
+                    layer.msg("正在加载二维码…………", {icon: 6, time: 1000});
+                }
+                ,yes: function(index, layero){
+                    layer.close(index);
+                }
+                ,btn2: function(index, layero){
+                    //按钮【按钮二】的回调
+                    layer.close(index);
+                    layer.closeAll('dialog');
+                    //return false //开启该代码可禁止点击该按钮关闭
+                }
+            });
+            return;
+        });*/
+        admin.req(getProjectUrl() + 'transferAccountsInfo/taglist', function (res) {
+            var data1 = res.data;
+            var d = [];
+            for (var i in data1) {
+                d.push({id:data1[i],name:data1[i]});
+            }
+            // 渲染字典下拉
+            xsSel = xnUtil.xsSelect("pay_tag", 'name', 'id', '请选择标签', d);
+
+        }, {async: true});
+        var trans = transfer.render({
+            elem: '#transfer-div'
+            ,data: []
+            ,title: ['未选择', '已选择']
+            ,showSearch: true
+        })
+        form.on('select(pay_tag)', function (d) {
+            admin.req(getProjectUrl() + 'transferAccountsInfo/list?tag='+d.value, function (res) {
+                var data1 = res.data;
+                var d = []
+                for (const dKey in data1) {
+                    d.push({value:data1[dKey].account,title:data1[dKey].name});
+                }
+                trans = transfer.render({
+                    elem: '#transfer-div'
+                    ,data: d
+                    ,title: ['未选择', '已选择']
+                    ,showSearch: true
+                })
+            }, {async: true});
+        });
+        var payapp;
+        admin.req(getProjectUrl() + 'payAppInfo/list', function (res) {
+            payapp = res.data;
+            for (var i in payapp) {
+                payapp[i].ac_name = '账号：'+payapp[i].account+'【应用：'+payapp[i].appName+"】";
+            }
+            // 渲染字典下拉
+            xsSel = xnUtil.xsSelect("pay_app", 'ac_name', 'id', '请选择付款应用', payapp);
+
+        }, {async: false});
+
+        /* 渲染表格 */
+        var insTb = tableX.render({
+            elem: '#dataTable',
+            url: getProjectUrl() + 'payInfoRecord/page',
+            page: true,
+            toolbar: ['<p>',
+                '<button lay-event="add" perm-show="payInfoRecord:add" class="layui-btn layui-btn-sm icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>&nbsp;',
+                '<button lay-event="delete" perm-show="payInfoRecord:delete" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
+                '</p>'].join(''),
+            cellMinWidth: 100,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field: 'account', title: '对方账号',width: 200},
+                    {field: 'name', title: '对方姓名',width: 100},
+                    {field: 'amount', title: '金额(元)' ,width: 90, templet: function (detailData) {
+                            return formatMoney(detailData.amount);
+                        }
+                    },
+                    {field: 'payStatus', title: '付款状态',width: 110, templet: function (detailData) {
+                            return detailData.payStatus === 0?'<span class="layui-badge layui-badge-blue">未付款</span>':detailData.payStatus === 1?'<span class="layui-badge layui-badge-green">付款成功</span>':detailData.payStatus === 2?'<span class="layui-badge layui-badge-yellow">付款中</span>':detailData.payStatus === 3?'<span class="layui-badge layui-badge-red">付款失败</span>':'<span class="layui-badge layui-badge-red">付款异常</span>' ;
+                        }
+                    },
+                    {field: 'request', title: '请求数据json',width: 130, templet: function (detailData) {
+                        var data = detailData.request;
+                        if(data && data.indexOf("{")>-1){
+                                let obj = JSON.parse(data);
+                                let　body = JSON.stringify(obj, null, 4);
+                                data = '<pre style="display: none;">'+body+'</pre>';
+                            }else{
+                                data = '<pre style="display: none;">'+data+'</pre>';
+                            }
+                            return data+'<a style="cursor: pointer" class="btn btn-sm layui-badge layui-badge-blue" data-click="showdata">展示数据</a>';
+                        }
+                    },
+                    {field: 'respone', title: '返回结果json',width: 130, templet: function (detailData) {
+                            var data = detailData.respone;
+                            if(data && data.indexOf("{")>-1){
+                                let obj = JSON.parse(data);
+                                let　body = JSON.stringify(obj, null, 4);
+                                data = '<pre style="display: none;">'+body+'</pre>';
+                            }else{
+                                data = '<pre style="display: none;">'+data+'</pre>';
+                            }
+                            var bad = ' layui-badge-blue';
+                            if(detailData.payStatus == 3){
+                                bad = ' layui-badge-red';
+                            }
+                            return data+'<a style="cursor: pointer" class="btn btn-sm layui-badge'+bad+'" data-click="showdata">展示数据</a>';
+                        }
+                    },
+                    {field: 'remark', title: '备注'},
+                    {field: 'createTime',width: 170, title: '创建时间'}
+                ]
+            ],
+            done: function(res, curr, count) {
+                $("[data-click]").click(function(){
+                    layer.open({
+                        type: 1,
+                        shadeClose: true,
+                        shade: false,
+                        area: ['95%', '90%'], //宽高
+                        content: $(this).prev()
+                    });
+                });
+            }
+        });
+
+
+
+        $("#pay-legend-div").click(function () {
+            $('#pay-fielde-div').toggle(1000);
+        });
+
+        form.on('submit(paySearch)', function (data) {
+            var pid = data.field.pay_app;
+            for (var i in payapp) {
+                if(payapp[i].id == pid){
+                    data.field.payAccount = payapp[i].account;
+                    data.field.appId = payapp[i].appId;
+                }
+            }
+            var getData = trans.getData('key123');
+            data.field.payUsers = JSON.stringify(getData);
+            admin.req(getProjectUrl() + 'payInfoRecord/topay', JSON.stringify(data.field), function (res) {
+                layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                    insTb.reload();
+                });
+            }, 'post');
+            return false;
+        });
+
+        /* 表格搜索 */
+        form.on('submit(tableSearch)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+            return false;
+        });
+
+        /* 表格工具条点击事件 */
+        table.on('tool(dataTable)', function (obj) {
+            /* 删除 */
+            if (obj.event === 'delete') {
+                layer.confirm('确定要操作该数据吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function () {
+                    admin.req(getProjectUrl() + 'payInfoRecord/delete', JSON.stringify([{'id': obj.data.id}]), function (res) {
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                        });
+                    }, 'post');
+                });
+            }
+            /* 编辑 */
+            if (obj.event === 'edit') {
+                showAddOrUpdateModel(obj.data);
+            }
+        });
+
+        /* 表格头工具栏点击事件 */
+        table.on('toolbar(dataTable)', function (obj) {
+            if (obj.event === 'add') { // 添加
+                showAddOrUpdateModel();
+            }
+            if (obj.event === 'delete') { // 删除
+                var checkRows = table.checkStatus('dataTable');
+                if (checkRows.data.length === 0) {
+                    notice.msg('请选择要操作的数据', {icon: 2});
+                    return;
+                }
+                layer.confirm('确定要操作该数据吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function () {
+                    var ids = checkRows.data.map(function (d) {
+                        return {"id": d.id};
+                    });
+                    admin.req(getProjectUrl() + 'payInfoRecord/delete', JSON.stringify(ids), function (res) {
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                        });
+                    }, 'post');
+                });
+            }
+        });
+
+        // 显示表单弹窗
+        function showAddOrUpdateModel(data) {
+            var layIndex = admin.open({
+                title: (data ? '修改' : '添加') + '打款记录',
+                url: getProjectUrl() + 'payInfoRecord/form',
+                area: ['800px', '500px'],
+                data: {data: data},     // 传递数据到表单页面
+                end: function () {
+                    var layerData = admin.getLayerData(layIndex, 'formOk');
+                    if (layerData) {  // 判断表单操作成功标识
+                        insTb.reload();  // 成功刷新表格
+                    }
+                },
+                success: function (layero, dIndex) {
+                    // 弹窗超出范围不出现滚动条
+                    $(layero).children('.layui-layer-content').css('overflow', 'visible');
+                    $(layero).find('[lay-submit]').focus();
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

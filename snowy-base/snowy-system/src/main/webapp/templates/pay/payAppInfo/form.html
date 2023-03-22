@@ -1,0 +1,198 @@
+<form id="addOrUpdateForm" lay-filter="addOrUpdateForm" class="layui-form model-form">
+
+    <input name="id" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">支付宝账号</label>
+        <div class="layui-input-block">
+            <input name="account" class="layui-input" placeholder="请输入支付宝账号" lay-verType="tips" lay-verify="required"
+                   required/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">支付宝姓名</label>
+        <div class="layui-input-block">
+            <input name="name" class="layui-input" placeholder="请输入支付宝姓名" lay-verType="tips" lay-verify="required"
+                   required/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">appId</label>
+        <div class="layui-input-block">
+            <input name="appId" class="layui-input" placeholder="请输入appid" lay-verType="tips" lay-verify="required"
+                   required/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">应用名称</label>
+        <div class="layui-input-block">
+            <input name="appName" class="layui-input" placeholder="请输入应用名称" lay-verType="tips" lay-verify="required"
+                   required/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">应用私钥</label>
+        <div class="layui-input-block">
+            <input name="privateKey" class="layui-input" placeholder="请输入应用私钥" lay-verType="tips" lay-verify="required"
+                   required/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">应用支付宝公钥</label>
+        <div class="layui-input-block">
+            <input name="publicKey" class="layui-input" placeholder="请输入应用支付宝公钥"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">根证书</label>
+        <div class="layui-input-block">
+                <table>
+                    <tr>
+                        <td width="400px"><input name="rootCertPath" id="rootCertPath" readonly="readonly" class="layui-input"
+                                   placeholder="请上传根证书" lay-verType="tips" lay-verify="required" required/>
+                        </td>
+                        <td>
+                            <button type="button" class="layui-btn" id="rootCertPath_upload"><i class="layui-icon"></i>上传文件
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">支付宝公钥证书</label>
+        <div class="layui-input-block">
+
+            <table>
+                <tr>
+                    <td width="400px"><input name="alipayPublicCertPath" id="alipayPublicCertPath" readonly="readonly"
+                               class="layui-input" placeholder="请上传支付宝公钥证书" lay-verType="tips" lay-verify="required"
+                               required/>
+                    </td>
+                    <td>
+                        <button type="button" class="layui-btn" id="alipayPublicCertPath_upload"><i
+                                class="layui-icon"></i>上传文件
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">应用公钥证书</label>
+        <div class="layui-input-block">
+            <table>
+                <tr>
+                    <td width="400px"><input name="appPublicCertPath" id="appPublicCertPath" readonly="readonly" class="layui-input"
+                               placeholder="请上传应用公钥证书" lay-verType="tips" lay-verify="required" required/>
+                    </td>
+                    <td>
+                        <button type="button" class="layui-btn" id="appPublicCertPath_upload"><i
+                                class="layui-icon"></i>上传文件
+                        </button>
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">备注</label>
+        <div class="layui-input-block">
+            <input name="remark" class="layui-input" placeholder="请输入备注"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item text-right">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="formSubmitBtn" lay-submit>保存</button>
+    </div>
+</form>
+<style type="text/css">
+    #addOrUpdateForm .layui-input-block {
+        margin-left: 180px;
+    }
+
+    #addOrUpdateForm .layui-form-label {
+        width: 140px;
+    }
+</style>
+<script>
+    layui.use(['layer', 'upload', 'form', 'admin', 'xnUtil', 'xmSelect', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var upload = layui.upload;
+
+        //指定允许上传的文件类型
+        upload.render({
+            elem: '#rootCertPath_upload'
+            , url: getProjectUrl() + 'payAppInfo/uploadFile' //此处配置你自己的上传接口即可
+            , accept: 'file' //普通文件
+            , done: function (res) {
+                layer.msg('上传成功');
+                if (res.code == 200) {
+                    $("#rootCertPath").val(res.data)
+                }
+            }
+        });
+
+        //指定允许上传的文件类型
+        upload.render({
+            elem: '#alipayPublicCertPath_upload'
+            , url: getProjectUrl() + 'payAppInfo/uploadFile' //此处配置你自己的上传接口即可
+            , accept: 'file' //普通文件
+            , done: function (res) {
+                layer.msg('上传成功');
+                if (res.code == 200) {
+                    $("#alipayPublicCertPath").val(res.data)
+                }
+            }
+        });
+
+        //指定允许上传的文件类型
+        upload.render({
+            elem: '#appPublicCertPath_upload'
+            , url: getProjectUrl() + 'payAppInfo/uploadFile' //此处配置你自己的上传接口即可
+            , accept: 'file' //普通文件
+            , done: function (res) {
+                layer.msg('上传成功');
+                if (res.code == 200) {
+                    $("#appPublicCertPath").val(res.data)
+                }
+            }
+        });
+
+        var editData = admin.getLayerData('#addOrUpdateForm').data;
+        if (editData !== null && editData !== undefined) {
+            form.val('addOrUpdateForm', editData);
+        }
+
+        /**
+         * 表单提交事件
+         */
+        form.on('submit(formSubmitBtn)', function (data) {
+            layer.load(2);
+
+            var url = editData ? getProjectUrl() + 'payAppInfo/edit' : getProjectUrl() + 'payAppInfo/add';
+            admin.req(url, JSON.stringify(data.field), function (res) {
+                layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                    admin.putLayerData('formOk', true, '#addOrUpdateForm');
+                    admin.closeDialog('#addOrUpdateForm');
+                });
+            }, 'post');
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

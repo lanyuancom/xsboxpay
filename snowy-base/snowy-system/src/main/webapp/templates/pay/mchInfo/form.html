@@ -1,0 +1,206 @@
+<form id="addOrUpdateForm" lay-filter="addOrUpdateForm" class="layui-form model-form">
+
+    <input name="id" type="hidden"/>
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">商户号</label>
+            <div class="layui-input-block">
+                <input name="mchNo" id="mchNo" class="layui-input" placeholder="请输入商户号" lay-verType="tips"
+                       lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">商户简称</label>
+            <div class="layui-input-block">
+                <input name="mchShortName" class="layui-input" placeholder="请输入商户简称" lay-verType="tips"
+                       lay-verify="required" required/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">联系人邮箱</label>
+            <div class="layui-input-block">
+                <input name="contactEmail" class="layui-input" placeholder="请输入联系人邮箱" lay-verType="tips"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">商户备注</label>
+            <div class="layui-input-block">
+                <input name="remark" class="layui-input" placeholder="请输入商户备注" lay-verType="tips"/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">商户名称</label>
+            <div class="layui-input-block">
+                <input name="mchName" class="layui-input" placeholder="请输入商户名称" lay-verType="tips" lay-verify="required"
+                       required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">联系人姓名</label>
+            <div class="layui-input-block">
+                <input name="contactName" class="layui-input" placeholder="请输入联系人姓名" lay-verType="tips"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">联系人手机号</label>
+            <div class="layui-input-block">
+                <input name="contactTel" class="layui-input" placeholder="请输入联系人手机号" lay-verType="tips"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">状态</label>
+            <div class="layui-input-block">
+                <div id="statusId"></div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md12">
+        <div class="layui-form-item">
+            <fieldset class="fieldset-from">
+                <legend class="legend-fieldset-from" id="legend-div">
+                    <div style="text-align: center;" class="layui-form-required">渠道分配</div>
+                </legend>
+                <div id="fielde-div">
+
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+    <div class="layui-form-item text-right">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="formSubmitBtn" lay-submit>保存</button>
+    </div>
+</form>
+<style type="text/css">
+    .layui-form-item .layui-form-checkbox[lay-skin=primary]{
+        margin-top:0px;
+    }
+</style>
+<script id="channelsScript" type="text/html">
+    <table>
+        {{#  layui.each(d, function(index, item){
+            var ck = '';
+            if(item.check){
+                ck='checked';
+            }
+            var wx = '';
+            if(item.wxPay){
+                 wx='checked';
+            }
+            var ali = '';
+            if(item.aliPay){
+                ali='checked';
+            }
+        }}
+        <tr>
+            <td>
+                <input type="checkbox" name="channels[{{ index}}].channelId" {{ ck }} value="{{ item.id }}"
+                       lay-skin="primary"
+                       title="{{ item.name }}">
+            </td>
+            <td>
+                &nbsp;&nbsp;&nbsp;-->&nbsp;&nbsp;支付类型【&nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+            <td><input lay-filter="switchTest" type="checkbox" name="channels[{{ index }}].wxPay" {{ wx }}
+                       value="{{ item.wxPay }}" lay-skin="primary"
+                       title="微信">
+            </td>
+            <td><input lay-filter="switchTest" type="checkbox" name="channels[{{ index }}].aliPay" {{ ali }}
+                       value="{{ item.aliPay }}" lay-skin="primary" title="支付宝&nbsp;&nbsp;&nbsp;&nbsp;】">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="10">
+                <hr>
+            </td>
+        </tr>
+        {{#  }); }}
+        {{#  if(d.length === 0){ }}
+        <tr><td>无数据</td></tr>
+        {{#  } }}
+
+
+    </table>
+</script>
+<script>
+    layui.use(['layer', 'form', 'admin', 'xnUtil', 'xmSelect', 'laytpl'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var xnUtil = layui.xnUtil;
+        var xmSelect = layui.xmSelect;
+        var laytpl = layui.laytpl;
+
+        form.render('checkbox');
+        var statusRenderIns = xmSelect.render({
+            el: '#statusId',
+            name: 'status',
+            data: xnUtil.getDictDataByDictTypeCode('common_status', null),
+            layVerify: 'required',
+            layVerType: 'tips',
+            radio: true,
+            clickClose: true,
+            model: {icon: 'hidden', label: {type: 'text'}},
+            prop: {
+                name: 'name',
+                value: 'code'
+            },
+            tips: '请选择状态'
+        }, {async: false});
+
+        var mchChannel_mchNo="";
+        var editData = admin.getLayerData('#addOrUpdateForm').data;
+        if (editData !== null && editData !== undefined) {
+            $('#mchNo').attr("style", "background: #8e8e8e26;");
+            $('#mchNo').attr("readonly", "readonly");
+
+            form.val('addOrUpdateForm', editData);
+            // 下拉赋值
+            statusRenderIns.setValue([editData.status]);
+            mchChannel_mchNo = editData.mchNo;
+
+        }
+        //监听指定开关
+        form.on('checkbox(switchTest)', function (data) {
+            if (this.checked) {
+                $(this).val(true);
+            } else {
+                $(this).val(false);
+            }
+        });
+        admin.req(getProjectUrl() + "mchChannel/list?mchNo="+mchChannel_mchNo, {}, function (res) {
+
+            var getTpl = channelsScript.innerHTML
+                ,view = document.getElementById('fielde-div');
+            laytpl(getTpl).render(res.data, function(html){
+                view.innerHTML = html;
+
+                form.render('checkbox');
+
+            });
+        }, 'get');
+        /**
+         * 表单提交事件
+         */
+        form.on('submit(formSubmitBtn)', function (data) {
+            layer.load(2);
+            var f = xnUtil.serializeJson(data.form)
+            var url = editData ? getProjectUrl() + 'mchInfo/edit' : getProjectUrl() + 'mchInfo/add';
+            admin.req(url, JSON.stringify(f), function (res) {
+                layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                    admin.putLayerData('formOk', true, '#addOrUpdateForm');
+                    admin.closeDialog('#addOrUpdateForm');
+                });
+            }, 'post');
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

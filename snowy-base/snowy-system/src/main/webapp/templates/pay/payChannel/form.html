@@ -1,0 +1,322 @@
+<form id="addOrUpdateForm" lay-filter="addOrUpdateForm" class="layui-form model-form">
+
+    <input name="id" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">选择渠道</label>
+        <div class="layui-input-block">
+            <select id="channelCode" name="channelCode" lay-filter="channelCode">
+                <option value="official">微信支付宝官方渠道</option>
+                <option value="baofu">宝付渠道</option>
+                <option value="fubei">付呗渠道</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-bottom: 0px">
+        <label class="layui-form-label layui-form-required">支持类型</label>
+        <div class="layui-input-block">
+            <table>
+                <tr>
+                    <td><label class="layui-form-label">微信</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" checked="checked" name="wxPay" value="1" lay-skin="switch"
+                                   lay-filter="wxPayTest" lay-text="开|关">
+                        </div>
+                    </td>
+                    <td><label class="layui-form-label">支付宝</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" checked="checked" name="aliPay" value="1" lay-skin="switch"
+                                   lay-filter="aliPayTest" lay-text="开|关">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="layui-form-item">
+
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">渠道名称</label>
+        <div class="layui-input-block">
+            <input name="name" class="layui-input" placeholder="请输入名称" lay-verType="tips" lay-verify="required"
+                   required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">通道标识</label>
+        <div class="layui-input-block">
+            <input name="channelNo" class="layui-input" placeholder="请输入通道标识" lay-verType="tips" lay-verify="required"
+                   required/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">商户号</label>
+        <div class="layui-input-block">
+            <input name="mchNo" class="layui-input" placeholder="请输入商户号" lay-verType="tips" lay-verify="required"
+                   />
+        </div>
+    </div>
+<!--
+    <div class="layui-form-item" id="div_vendor_sn">
+        <label class="layui-form-label layui-form-required">vendor_sn</label>
+        <div class="layui-input-block">
+            <input name="vendor_sn" class="layui-input" placeholder="请输入vendor_sn"
+                   />
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="div_vendor_secret">
+        <label class="layui-form-label layui-form-required">vendor_secret</label>
+        <div class="layui-input-block">
+            <input name="vendor_secret" class="layui-input" placeholder="请输入vendor_secret"
+                   />
+        </div>
+    </div>-->
+
+    <div class="layui-form-item" id="div_baofu_publicKey">
+        <label class="layui-form-label layui-form-required">公钥</label>
+        <div class="layui-input-block">
+            <input name="publicKey" class="layui-input" placeholder="请输入公钥"
+                   />
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="div_baofu_privateKey">
+        <label class="layui-form-label layui-form-required">私钥</label>
+        <div class="layui-input-block">
+            <input name="privateKey" class="layui-input" placeholder="请输入私钥"
+                   />
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">状态</label>
+        <div class="layui-input-block">
+            <div id="statusId"></div>
+        </div>
+    </div>
+    <div class="layui-col-md12">
+        <div class="layui-form-item">
+            <fieldset class="fieldset-from">
+                <legend class="legend-fieldset-from" id="legend-div">
+                    <div style="text-align: center;">支付配置</div>
+                </legend>
+                <div id="fielde-div">
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">微信配置</div>
+                            <div class="layui-card-body">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">微信商户号</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input name="wxMchNo" class="layui-input" placeholder="请输入微信商户号"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                        <label class="layui-form-label" style="width: 150px;">是否服务商</label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox"  name="wxService" value="0" lay-skin="switch"
+                                                   lay-filter="wxService" lay-text="是|否">
+                                        </div>
+                                </div>
+                                <div class="layui-form-item" id="div_subMchNo" style="display: none">
+                                    <label class="layui-form-label">子商户号</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input name="subMchNo" class="layui-input" placeholder="请输入子商户号"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">API秘钥</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input name="wxMchKey" class="layui-input" placeholder="请输入wxMchKey"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">appId</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input name="wxAppId" class="layui-input" placeholder="请输入appId"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">appSecret</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input name="wxAppSecret" class="layui-input" placeholder="请输入appSecret"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">费率(%)</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input name="wxRate" class="layui-input" placeholder="请输入费率" value="0.6"
+                                               lay-verType="tips" lay-verify="required" required/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">上传v2证书</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input id="wxKeyPath" name="wxKeyPath" type="hidden" />
+                                        <button type="button" class="layui-btn" id="wxKeyPathUpload"><i class="layui-icon"></i>上传v2证书</button>
+                                        <span style="color: red;font-size: 12px;" id="span_wxKeyPath">如需要退款，必须上传证书</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">支付宝配置</div>
+                            <div class="layui-card-body">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">appId</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input name="aliAppId" class="layui-input" placeholder="请输入appId"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">支付宝私钥</label>
+                                    <div class="layui-input-block">
+                                        <input name="aliPrivateKey" class="layui-input" placeholder="请输入私钥"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">支付宝公钥</label>
+                                    <div class="layui-input-block">
+                                        <input name="aliPublicKey" class="layui-input" placeholder="支付宝公钥"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">费率(%)</label>
+                                    <div class="layui-input-block layui-input-block-nps">
+                                        <input name="aliRate" class="layui-input" placeholder="请输入费率" value="0.6"
+                                               lay-verType="tips" lay-verify="required" required/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="layui-form-item text-right">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="formSubmitBtn" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'form', 'admin', 'xnUtil', 'xmSelect', 'upload'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var xnUtil = layui.xnUtil;
+        var xmSelect = layui.xmSelect;
+        var upload = layui.upload;
+        form.render('select');
+        form.render('checkbox');
+
+        upload.render({
+            elem: '#wxKeyPathUpload'
+            ,url: getProjectUrl() + 'payChannel/upload' //此处配置你自己的上传接口即可
+            ,accept: 'file' //普通文件
+            ,done: function(res){
+                layer.msg('上传成功');
+                console.log(res);
+                $("#wxKeyPath").val(res.data);
+                $("#span_wxKeyPath").html("已上传！");
+            }
+        });
+
+
+        var statusRenderIns = xmSelect.render({
+            el: '#statusId',
+            name: 'status',
+            data: xnUtil.getDictDataByDictTypeCode('common_status', null),
+            layVerify: 'required',
+            layVerType: 'tips',
+            radio: true,
+            clickClose: true,
+            model: {icon: 'hidden', label: {type: 'text'}},
+            prop: {
+                name: 'name',
+                value: 'code'
+            },
+            tips: '请选择状态'
+        }, {async: false});
+        form.on('select(channelCode)', function(data){
+            $("[id^='div_']").css("display","none")
+            if(data.value == 'fubei'){
+                $("[id^='div_vendor']").css("display","block")
+            }else if(data.value == 'baofu'){
+                $("[id^='div_baofu']").css("display","block")
+            }
+        });
+
+        var editData = admin.getLayerData('#addOrUpdateForm').data;
+        if (editData !== null && editData !== undefined) {
+            if (editData.ifParams && "" != editData.ifParams) {
+                var mp = JSON.parse(editData.ifParams);
+                for (let key in mp) {
+                    $("input[name='" + key + "']").val(mp[key]);
+                    if(key == "wxKeyPath" && "" != mp[key]){
+                        $("#span_wxKeyPath").html("已上传！");
+                    }
+                    if(key == "wxService" && "1" == mp[key]){
+                        $("#div_subMchNo").css("display","block")
+                    }
+                }
+            }
+
+            form.val('addOrUpdateForm', editData);
+            // 下拉赋值
+            statusRenderIns.setValue([editData.status]);
+        }
+        //监听指定开关
+        form.on('switch(wxPayTest)', function (data) {
+            if (this.checked) {
+                $(this).val(1);
+            } else {
+                $(this).val(0);
+            }
+        });
+
+
+        form.on('switch(wxService)', function (data) {
+            if (this.checked) {
+                $(this).val(1);
+                $("#div_subMchNo").css("display","block")
+            } else {
+                $(this).val(0);
+                $("#div_subMchNo").css("display","none")
+            }
+        });
+
+        //监听指定开关
+        form.on('switch(aliPayTest)', function (data) {
+            if (this.checked) {
+                $(this).val(1);
+            } else {
+                $(this).val(0);
+            }
+        });
+        /**
+         * 表单提交事件
+         */
+        form.on('submit(formSubmitBtn)', function (data) {
+            layer.load(2);
+
+            var url = editData ? getProjectUrl() + 'payChannel/edit' : getProjectUrl() + 'payChannel/add';
+            admin.req(url, JSON.stringify(data.field), function (res) {
+                layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                    admin.putLayerData('formOk', true, '#addOrUpdateForm');
+                    admin.closeDialog('#addOrUpdateForm');
+                });
+            }, 'post');
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

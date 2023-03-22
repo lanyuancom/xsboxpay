@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>支付订单表</title>
+    <link rel="stylesheet" href="${ctxPath}/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="${ctxPath}/assets/module/admin.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!-- 正文开始 -->
+<div class="layui-fluid" style="padding: 8px;">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!-- 表格工具栏 -->
+            <form class="layui-form toolbar">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">商户号:</label>
+                        <div class="layui-input-inline">
+                            <input name="mchNo" class="layui-input" placeholder="请输入商户号"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">商户订单号:</label>
+                        <div class="layui-input-inline">
+                            <input name="mchOrderNo" class="layui-input" placeholder="请输入商户订单号"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">支付订单号:</label>
+                        <div class="layui-input-inline">
+                            <input name="payOrderId" class="layui-input" placeholder="请输入支付订单号"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">&emsp;
+                        <button class="layui-btn icon-btn" lay-filter="tableSearch" lay-submit>
+                            <i class="layui-icon">&#xe615;</i>搜索
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary icon-btn">
+                            <i class="layui-icon">&#xe669;</i>重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- 数据表格 -->
+            <table id="dataTable" lay-filter="dataTable"></table>
+        </div>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="tableBar">
+    <a class="layui-btn layui-btn-xs" perm-show="payOrder:edit" lay-event="edit">&nbsp;&nbsp;详&nbsp;细&nbsp;&nbsp;</a><br/>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" perm-show="payOrder:refund" lay-event="refund">&nbsp;&nbsp;退&nbsp;款&nbsp;&nbsp;</a>
+</script>
+<!-- 表格操作列 -->
+<script type="text/html" id="supplement">
+    <a class="layui-btn layui-btn-xs" lay-event="supplement">&nbsp;&nbsp;手动补单&nbsp;&nbsp;</a><br/>
+</script>
+<!-- js部分 -->
+<script src="${ctxPath}/assets/libs/layui/layui.js"></script>
+<script src="${ctxPath}/assets/js/common.js"></script>
+<style>
+    .layui-icon-about {
+        color: red;
+        margin-left: 8px;
+        font-weight: 800;
+        font-size: 19px;
+    }
+    .layui-table-cell{
+        overflow:visible;
+        text-overflow:inherit;
+        white-space:normal;
+        height: auto;/*在这里设置行高没用*/
+        word-break: break-all;
+    }
+
+</style>
+<script>
+    layui.use(['layer', 'table', 'tableX', 'notice', 'xnUtil', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var table = layui.table;
+        var tableX = layui.tableX;
+        var admin = layui.admin;
+        var form = layui.form;
+        var notice = layui.notice;
+        var xnUtil = layui.xnUtil;
+        var laydate = layui.laydate;
+
+
+        var cols = [
+            {title: '操作', toolbar: '#tableBar', align: 'center', width: 80},
+            {field: 'mchNo', title: '商户号'},
+            {field: 'payOrderId',width: 350, title: '订单号', templet: function (detailData) {
+                    return "平台订单号：<i class=\"layui-icon layui-icon-read\"  title=\"点击可复制\" style=\"cursor:pointer;\" onclick=\"copyCode(`"+detailData.payOrderId+"`)\"></i> <span class=\"layui-badge layui-badge-green\">"+detailData.payOrderId+"</span><br>商户订单号：<i class=\"layui-icon layui-icon-read\" title=\"点击可复制\" style=\"cursor:pointer;\" onclick=\"copyCode('"+detailData.mchOrderNo+"')\"></i> <span class=\"layui-badge layui-badge-blue\">"+detailData.mchOrderNo+"</span>";
+                }
+            },
+            {field: 'state', title: '支付状态',width: 120, templet: function (detailData) {
+                    return detailData.state === 0?'<span class="layui-badge layui-badge-blue">订单生成</span>':detailData.state === 1?'<span class="layui-badge layui-badge-yellow">支付中</span>':detailData.state === 2?'<span class="layui-badge layui-badge-green">支付成功</span>':detailData.state === 3?'<span class="layui-badge layui-badge-red">支付失败</span><i data-obj="'+detailData.errMsg+'" class="layui-icon layui-icon-about"></i>':detailData.state === 4?'<span class="layui-badge layui-badge-gray">已撤销</span>':detailData.state === 5?'<span class="layui-badge layui-badge-yellow">退款中</span>':detailData.state === 6?'<span class="layui-badge layui-badge-red">已退款</span>':detailData.state === 7?'<span class="layui-badge layui-badge-red">退款失败</span>':detailData.state === 8?'<span class="layui-badge layui-badge-gray">订单关闭</span>':'<span class="layui-badge layui-badge-red">未知</span>';
+                }
+            },
+            {field: 'ifCode', title: '支付方式'},
+            {field: 'amount', title: '支付金额(元)',width: 120, templet: function (detailData) {
+                    return formatMoney(detailData.amount);
+                }
+            },
+            {field: 'amount', title: '补单操作',toolbar: '#supplement',width: 120,},
+            {field: 'mchFeeRate', title: '费率快照'},
+            {field: 'mchFeeAmount', title: '手续费'},
+            {field: 'refundState', title: '退款状态', templet: function (detailData) {
+                    return detailData.refundState === 0?'<span class="layui-badge layui-badge-blue">未发起</span>':detailData.refundState === 1?'<span class="layui-badge layui-badge-yellow">部分退款</span>':detailData.refundState === 2?'<span class="layui-badge layui-badge-green">全额退款</span>':'<span class="layui-badge layui-badge-red">未知</span>' ;
+                }
+            },
+            {field: 'createTime',width: 170, title: '创建时间'}
+        ];
+        if("${loginUser.adminType}" == "1"){
+            var field = {field: 'divisionState',width: 120, title: '分账状态', templet: function (detailData) {
+                        return detailData.divisionState === 0?'<span class="layui-badge layui-badge-blue">未分账</span>':detailData.divisionState === 1?'<span class="layui-badge layui-badge-blue">等待分账</span>':detailData.divisionState === 2?'<span class="layui-badge layui-badge-yellow">处理中</span>':detailData.divisionState === 3?'<span class="layui-badge layui-badge-green">分账成功</span>':'<span class="layui-badge layui-badge-red">分账失败</span><i data-obj="'+JSON.parse(detailData.divisionMsg).msg+'" class="layui-icon layui-icon-about"></i>' ;
+                    }
+                };
+            cols.splice(4, 0,field);
+        }
+        /* 渲染表格 */
+        var insTb = tableX.render({
+            elem: '#dataTable',
+            url: getProjectUrl() + 'payOrder/page',
+            page: true,
+            cellMinWidth: 100,
+            cols: [
+                cols
+            ],
+            done: function(res, curr, count) {
+                xnUtil.tableDone(insTb, res, curr, count);
+                $(".layui-icon-about").mouseover(function() {
+                    layer.tips($(this).attr("data-obj"), this, {
+                        tips: [1, '#070000']
+                    });
+                });
+            }
+        });
+
+        /* 表格搜索 */
+        form.on('submit(tableSearch)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+            return false;
+        });
+
+        /* 表格工具条点击事件 */
+        table.on('tool(dataTable)', function (obj) {
+            /* 删除 */
+            if (obj.event === 'delete') {
+                layer.confirm('确定要操作该数据吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function () {
+                    admin.req(getProjectUrl() + 'payOrder/delete', JSON.stringify([{'id': obj.data.id}]), function(res){
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                        });
+                    }, 'post');
+                });
+            }
+            /* 编辑 */
+            if (obj.event === 'edit') {
+                showAddOrUpdateModel(obj.data);
+            }
+            /* 编辑 */
+            if (obj.event === 'supplement') {
+                layer.confirm('确定要补单吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function () {
+                    admin.req(getProjectUrl() + 'payOrder/supplement',  JSON.stringify({'id': obj.data.id}), function(res){
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                        });
+                    }, 'post');
+                });
+            }
+
+            if (obj.event === 'refund') {
+                layer.confirm('确定要退款吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function () {
+                    admin.req(getProjectUrl() + 'payOrder/refund', JSON.stringify([{'payOrderId': obj.data.payOrderId}]), function(res){
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                        });
+                    }, 'post');
+                });
+            }
+
+        });
+
+        /* 表格头工具栏点击事件 */
+        table.on('toolbar(dataTable)', function (obj) {
+            if (obj.event === 'add') { // 添加
+                showAddOrUpdateModel();
+            }
+            if (obj.event === 'delete') { // 删除
+                var checkRows = table.checkStatus('dataTable');
+                if (checkRows.data.length === 0) {
+                    notice.msg('请选择要操作的数据', {icon: 2});
+                    return;
+                }
+                layer.confirm('确定要操作该数据吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function () {
+                    var ids = checkRows.data.map(function (d) {
+                        return {"id": d.id};
+                    });
+                    admin.req(getProjectUrl() + 'payOrder/delete', JSON.stringify(ids), function(res){
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            insTb.reload();
+                        });
+                    }, 'post');
+                });
+            }
+        });
+
+        // 显示表单弹窗
+        function showAddOrUpdateModel(data) {
+            var layIndex = admin.open({
+                title: (data ? '详细信息' : '添加') ,
+                url: getProjectUrl() + 'payOrder/form',
+                area: ['1000px','auto'],
+                data: { data: data },     // 传递数据到表单页面
+                success: function (layero, dIndex) {
+                    // 弹窗超出范围不出现滚动条
+                    $(layero).children('.layui-layer-content').css('overflow', 'visible');
+                    $(layero).children('.layui-layer-content').css('height', 'auto');
+                    $(layero).find('[lay-submit]').focus();
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

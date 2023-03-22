@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vip.xiaonuo.pay.modular.mchpiecesinfo.mapper.MchPiecesInfoMapper">
+    <select id="findBankCode" resultType="map">
+        select * from xs_bank_code where `name` like concat('%', #{name},'%') limit 20
+    </select>
+</mapper>

@@ -1,0 +1,153 @@
+<form id="addOrUpdateForm" lay-filter="addOrUpdateForm" class="layui-form model-form">
+    <div class="layui-col-md4">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">商户号</label>
+            <div class="layui-input-block" id="mchNo">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">支付订单号</label>
+            <div class="layui-input-block" id="payOrderId">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">商户订单号</label>
+            <div class="layui-input-block" id="mchOrderNo">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">支付状态</label>
+            <div class="layui-input-block" id="state">
+            </div>
+        </div>
+
+        <div class="layui-form-item" id="divisionState_div">
+            <label class="layui-form-label">分账状态</label>
+            <div class="layui-input-block" id="divisionState">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">回调状态</label>
+            <div class="layui-input-block" id="notifyState">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">支付接口</label>
+            <div class="layui-input-block" id="ifCode">
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label">支付方式</label>
+            <div class="layui-input-block" id="wayCode">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">支付金额</label>
+            <div class="layui-input-block" id="amount">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">费率快照</label>
+            <div class="layui-input-block" id="mchFeeRate">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">手续费</label>
+            <div class="layui-input-block" id="mchFeeAmount">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">退款状态</label>
+            <div class="layui-input-block" id="refundState">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">客户端IP</label>
+            <div class="layui-input-block" id="clientIp">
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-col-md4">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品标题</label>
+            <div class="layui-input-block" id="subject">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">商品描述</label>
+            <div class="layui-input-block" id="body">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">异步通知</label>
+            <div class="layui-input-block" id="notifyUrl">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">支付成功时间</label>
+            <div class="layui-input-block" id="successTime">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">订单创建时间</label>
+            <div class="layui-input-block" id="createTime">
+            </div>
+        </div>
+    </div>
+</form>
+<style>
+    .layui-input-block{
+        padding-top: 6px;
+    }
+</style>
+<script>
+    layui.use(['layer', 'form', 'admin'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var admin = layui.admin;
+
+
+        var editData = admin.getLayerData('#addOrUpdateForm').data;
+        if (editData !== null && editData !== undefined) {
+            for (var item in editData) {
+                var vi = editData[item];
+                if(item == 'state'){
+                    vi = vi === 0?'<span class="layui-badge layui-badge-blue">订单生成</span>':vi === 1?'<span class="layui-badge layui-badge-yellow">支付中</span>':vi === 2?'<span class="layui-badge layui-badge-green">支付成功</span>':vi === 3?'<span class="layui-badge layui-badge-red">支付失败</span> <i data-obj="'+editData.errMsg+'" class="layui-icon layui-icon-about"></i>':vi === 4?'<span class="layui-badge layui-badge-gray">已撤销</span>':vi === 5?'<span class="layui-badge layui-badge-yellow">退款中</span>':vi === 6?'<span class="layui-badge layui-badge-red">已退款</span>':vi === 7?'<span class="layui-badge layui-badge-red">退款失败</span>':vi === 8?'<span class="layui-badge layui-badge-gray">订单关闭</span>':'<span class="layui-badge layui-badge-red">未知</span>'
+                }else if(item == 'amount'){
+                    vi = vi/100;
+                }else if(item == 'refundState'){
+                    vi = vi === 0?'<span class="layui-badge layui-badge-blue">未发起</span>':vi === 1?'<span class="layui-badge layui-badge-yellow">部分退款</span>':vi === 2?'<span class="layui-badge layui-badge-green">全额退款</span>':'<span class="layui-badge layui-badge-red">未知</span>' ;
+                }else if(item == 'divisionState'){
+                    vi = vi === 0?'<span class="layui-badge layui-badge-blue">未分账</span>':vi === 1?'<span class="layui-badge layui-badge-blue">等待分账</span>':vi === 2?'<span class="layui-badge layui-badge-yellow">处理中</span>':vi === 3?'<span class="layui-badge layui-badge-green">分账成功</span>':'<span class="layui-badge layui-badge-red">分账失败</span><i data-obj="'+JSON.parse(editData.divisionMsg).msg+'" class="layui-icon layui-icon-about"></i>' ;
+                }else if(item == 'notifyState'){
+                    vi = vi === 0?'<span class="layui-badge layui-badge-blue">未发起</span>':vi === 1?'<span class="layui-badge layui-badge-green">发送成功</span>':vi === 2?'<span class="layui-badge layui-badge-red">发送失败</span><i data-obj="'+editData.notifyMsg+'" class="layui-icon layui-icon-about"></i>':'<span class="layui-badge layui-badge-red">未知</span>' ;
+                }
+                $("#" + item).html(vi);
+            }
+            $(".layui-icon-about").mouseover(function() {
+                layer.tips($(this).attr("data-obj"), this, {
+                    tips: [1, '#070000']
+                });
+            });
+        }
+    });
+</script>
+</body>
+</html>

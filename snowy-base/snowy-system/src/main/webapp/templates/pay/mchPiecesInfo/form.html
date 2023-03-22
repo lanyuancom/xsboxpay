@@ -1,0 +1,724 @@
+<form id="addOrUpdateForm" lay-filter="addOrUpdateForm" class="mchPiecesInfo_form layui-form model-form">
+
+    <input name="id" type="hidden"/>
+    <div class="layui-form-item">
+        <div class="layui-card-header" style="font-weight: bolder">商户信息</div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">进件类型</label>
+                <div class="layui-input-block layui-form">
+                    <select id="piecesType" name="piecesType" placeholder="请选择进件类型" lay-verType="tips" lay-verify="required" required>
+                        <option value="wx" selected>微信</option>
+                        <option value="bf">宝付</option>
+                    </select>
+                </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">商户简称</label>
+            <div class="layui-input-block">
+                <input name="businessShortName" class="layui-input" placeholder="请输入商户简称" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">入网类型</label>
+            <div class="layui-input-block"><!--
+                <input type="radio" name="netType" lay-filter="netTypeRadio" value="PERSON" title="个人"/>-->
+                <input type="radio" name="netType" lay-filter="netTypeRadio" checked value="CORP_CODE" title="公司"/>
+            </div>
+        </div>
+    </div>
+    <div id="qiye">
+        <div class="layui-form-item">
+            <div class="layui-card-header" style="font-weight: bolder">企业信息</div>
+        </div>
+
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户全称</label>
+                <div class="layui-input-block">
+                    <input name="businessFullName" class="layui-input" placeholder="请输入商户全称"/>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">执照编号</label>
+                <div class="layui-input-block">
+                    <input name="businessNo" class="layui-input" placeholder="请输入执照编号"/>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">开户许可编号</label>
+                <div class="layui-input-block">
+                    <input name="businessAccountLicenseNo" class="layui-input" placeholder="请输入开户许可编号"/>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">营业期限证件是否长期有效</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="orgcodeLong" checked value="YES" title="是"/>
+                    <input type="radio" name="orgcodeLong" value="NO" title="否"/>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-form-item">
+                <label class="layui-form-label">营业期限</label>
+                <div class="layui-inline" id="orgcode-date">
+                    <div class="layui-input-inline">
+                        <input name="orgcodeStart" type="text" autocomplete="off" id="test-startDate-1" class="layui-input" placeholder="开始日期">
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline">
+                        <input name="orgcodeEnd" type="text" class="layui-input" placeholder="结束日期">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6" style="margin-left: 150px">
+            <input type="hidden" name="businessFront" id="businessFront">
+            <div class="layui-form-item">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="businessFront_upload">营业执照正面</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" width="200px" height="200px" id="businessFront_show">
+                        <p id="businessFront_Text"></p>
+                    </div>
+                    <div style="width: 200px;">
+                        <div class="layui-progress layui-progress-big" lay-showpercent="yes" lay-filter="businessFront_filter">
+                            <div class="layui-progress-bar" lay-percent=""></div>
+                        </div>
+                    </div>
+                </div>
+
+                <a name="list-progress"> </a>
+
+                <div style="margin-top: 10px;">
+
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <input type="hidden" name="businessAccountLicense" id="businessAccountLicense">
+            <div class="layui-form-item">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="businessAccountLicense_upload">开户许可</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" width="200px" height="200px" id="businessAccountLicense_show">
+                        <p id="businessAccountLicense_Text"></p>
+                    </div>
+                    <div style="width: 200px;">
+                        <div class="layui-progress layui-progress-big" lay-showpercent="yes" lay-filter="businessAccountLicense_filter">
+                            <div class="layui-progress-bar" lay-percent=""></div>
+                        </div>
+                    </div>
+                </div>
+
+                <a name="list-progress"> </a>
+
+                <div style="margin-top: 10px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-card-header" style="font-weight: bolder">法人信息</div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">法人姓名</label>
+            <div class="layui-input-block">
+                <input name="legarName" class="layui-input" placeholder="请输入法人姓名" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">法人身份证</label>
+            <div class="layui-input-block">
+                <input name="legarCard" class="layui-input" placeholder="请输入法人身份证" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">法人手机号</label>
+            <div class="layui-input-block">
+                <input name="legarPhone" class="layui-input" placeholder="请输入法人手机号" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">身份证详细地址</label>
+            <div class="layui-input-block">
+                <input name="idCardAddress" class="layui-input" placeholder="请输入身份证详细地址" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label">身份证期限</label>
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input name="cardStart" type="text" class="layui-input" placeholder="开始日期">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline">
+                    <input name="cardEnd" type="text" class="layui-input" placeholder="结束日期">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4" style="margin-left: 150px">
+        <input type="hidden" name="frontCard" id="frontCard">
+        <div class="layui-form-item">
+            <div class="layui-upload">
+                <button type="button" class="layui-btn" id="frontCard_upload">身份证正面</button>
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img" width="200px" height="200px" id="frontCard_show">
+                    <p id="frontCard_Text"></p>
+                </div>
+                <div style="width: 200px;">
+                    <div class="layui-progress layui-progress-big" lay-showpercent="yes" lay-filter="frontCard_filter">
+                        <div class="layui-progress-bar" lay-percent=""></div>
+                    </div>
+                </div>
+            </div>
+
+            <a name="list-progress"> </a>
+
+            <div style="margin-top: 10px;">
+
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <input type="hidden" name="backCard" id="backCard">
+        <div class="layui-form-item">
+            <div class="layui-upload">
+                <button type="button" class="layui-btn" id="backCard_upload">身份证反面</button>
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img" width="200px" height="200px" id="backCard_show">
+                    <p id="backCard_Text"></p>
+                </div>
+                <div style="width: 200px;">
+                    <div class="layui-progress layui-progress-big" lay-showpercent="yes" lay-filter="backCard_filter">
+                        <div class="layui-progress-bar" lay-percent=""></div>
+                    </div>
+                </div>
+            </div>
+
+            <a name="list-progress"> </a>
+
+            <div style="margin-top: 10px;">
+
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-card-header" style="font-weight: bolder">联系人信息</div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">联系姓名</label>
+            <div class="layui-input-block">
+                <input name="contactName" class="layui-input" placeholder="请输入联系姓名" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">联系手机号</label>
+            <div class="layui-input-block">
+                <input name="contactPhone" class="layui-input" placeholder="请输入联系手机号" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">联系邮箱</label>
+            <div class="layui-input-block">
+                <input name="contactEmail" class="layui-input" placeholder="请输入联系邮箱，各子商户邮箱地址唯一" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">客服电话</label>
+            <div class="layui-input-block">
+                <input name="servePhone" class="layui-input" placeholder="请输入客服电话" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-card-header" style="font-weight: bolder">经营场景</div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">服务商公众号appid</label>
+            <div class="layui-input-block">
+                <input name="mpAppid" id="mpAppid" class="layui-input" placeholder="请输入服务商公众号appid" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4 layui-form-item" style="margin-left: 150px">
+        <input type="hidden" name="mpPics" id="mpPics">
+        <div class="layui-form-item">
+            <div class="layui-upload">
+                <button type="button" class="layui-btn" id="mpPics_upload">服务商公众号首页截图</button>
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img" width="200px" height="200px" id="mpPics_show">
+                    <p id="mpPics_Text"></p>
+                </div>
+                <div style="width: 200px;">
+                    <div class="layui-progress layui-progress-big" lay-showpercent="yes" lay-filter="mpPics_filter">
+                        <div class="layui-progress-bar" lay-percent=""></div>
+                    </div>
+                </div>
+            </div>
+
+            <a name="list-progress"> </a>
+
+            <div style="margin-top: 10px;">
+
+            </div>
+        </div>
+    </div>
+    <!--<div class="layui-form-item">
+        <div class="layui-card-header" style="font-weight: bolder">经营地址</div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label">经营类别</label>
+            <div class="layui-input-block">
+                <input name="levelOneNo" class="layui-input" placeholder="请输入经营类别  参考附件 经营类别编码" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label">行业类别</label>
+            <div class="layui-input-block">
+                <input name="levelTwoNo" class="layui-input" placeholder="请输入行业类别  参考附件 行业类别编码" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">经营地址</label>
+            <div class="layui-input-block">
+                <input id="cascadePicker" placeholder="请选择经营地址" class="layui-hide" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">经营地址详细地址</label>
+            <div class="layui-input-block">
+                <input name="subUserAddress" class="layui-input" placeholder="请输入经营地址详细地址" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>-->
+    <div class="layui-form-item">
+        <div class="layui-card-header" style="font-weight: bolder">结算银行</div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">结算账户类型</label>
+            <div class="layui-input-block">
+               <!-- <input type="radio" name="accountType" checked value="PRIVATE" title="对私"/>-->
+                <input type="radio" name="accountType" checked value="PUBLIC" title="对公"/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">所在银行 </label>
+            <div class="layui-input-block layui-form">
+                <select id="accountBank" name="accountBank" placeholder="请选择银行" lay-verType="tips" lay-verify="required" required lay-search>
+                    <option value="工商银行">工商银行</option>
+                    <option value="交通银行">交通银行</option>
+                    <option value="招商银行">招商银行</option>
+                    <option value="民生银行">民生银行</option>
+                    <option value="中信银行">中信银行</option>
+                    <option value="浦发银行">浦发银行</option>
+                    <option value="兴业银行">兴业银行</option>
+                    <option value="光大银行">光大银行</option>
+                    <option value="广发银行">广发银行</option>
+                    <option value="平安银行">平安银行</option>
+                    <option value="北京银行">北京银行</option>
+                    <option value="华夏银行">华夏银行</option>
+                    <option value="农业银行">农业银行</option>
+                    <option value="建设银行">建设银行</option>
+                    <option value="邮政储蓄银行">邮政储蓄银行</option>
+                    <option value="中国银行">中国银行</option>
+                    <option value="宁波银行">宁波银行</option>
+                    <option value="其他银行">其他银行</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">所在银行全称（包括支行名称）</label>
+            <div class="layui-input-block layui-form" id="div_findBankCode" lay-filter="findBankCode">
+                <input type="hidden" class="layui-input" name="bankName" id="bankName"/>
+                <select id="bankCode" lay-filter="bankCodeFilter" style="display:none;" autocomplete="off" name="bankCode" placeholder="请选择所在银行全称（包括支行名称" lay-verType="tips" lay-verify="required" required lay-search>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">银行户名</label>
+            <div class="layui-input-block">
+                <input name="bankAccount" class="layui-input" placeholder="请输入银行户名" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">银行卡号</label>
+            <div class="layui-input-block">
+                <input name="bankNo" class="layui-input" placeholder="请输入银行卡号" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">银行地址</label>
+            <div class="layui-input-block">
+                <input id="cascadePickerbank" placeholder="请输入银行地址" class="layui-hide" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-card-header" style="font-weight: bolder">结算方式</div>
+    </div>
+   <!-- <div class="layui-col-md4">
+
+        <div class="layui-form-item" >
+            <label class="layui-form-label layui-form-required">结算方式</label>
+            <div class="layui-input-block">
+                <input type="radio" name="settType" checked value="AUTO_TIMING" title="自动定期结算"/>
+                <input type="radio" name="settType" value="SELF_SERVICE" title="自助结算"/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md4" >
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">结算周期</label>
+            <div class="layui-input-block">
+                <input type="radio" name="settCycle" checked value="D1" title="自然日隔天"/>
+                <input type="radio" name="settCycle" value="T1" title="工作日隔天"/>
+            </div>
+        </div>
+    </div>-->
+    <div class="layui-col-md4">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">收款上限</label>
+            <div class="layui-input-block">
+                <input name="maxAmount" class="layui-input" placeholder="请输入收款上限" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">备注描述</label>
+            <div class="layui-input-block">
+                <input name="remark" class="layui-input" placeholder="请输入备注描述" lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item text-right">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="formSubmitBtn" lay-submit>保存</button>
+    </div>
+</form>
+<style type="text/css">
+    .mchPiecesInfo_form .layui-input-block {
+        margin-left: 150px;
+    }
+    .mchPiecesInfo_form .layui-form-label {
+        width: 120px;
+    }
+</style>
+<script src="${ctxPath}/assets/module/cascader/citys-data.js"></script>
+<script>
+    function banBackSpace(e){
+        var ev = e || window.event;
+        //各种浏览器下获取事件对象
+        var obj = ev.relatedTarget || ev.srcElement || ev.target ||ev.currentTarget;
+        //按下Backspace键
+        if(ev.keyCode == 8){
+            var tagName = obj.nodeName //标签名称
+            //如果标签不是input或者textarea则阻止Backspace
+            if(tagName!='INPUT' && tagName!='TEXTAREA'){
+                return stopIt(ev);
+            }
+            var tagType = obj.type.toUpperCase();//标签类型
+            //input标签除了下面几种类型，全部阻止Backspace
+            if(tagName=='INPUT' && (tagType!='TEXT' && tagType!='TEXTAREA' && tagType!='PASSWORD')){
+                return stopIt(ev);
+            }
+            //input或者textarea输入框如果不可编辑则阻止Backspace
+            if((tagName=='INPUT' || tagName=='TEXTAREA') && (obj.readOnly==true || obj.disabled ==true)){
+                return stopIt(ev);
+            }
+        }
+    }
+    function stopIt(ev){
+        if(ev.preventDefault ){
+            //preventDefault()方法阻止元素发生默认的行为
+            ev.preventDefault();
+        }
+        if(ev.returnValue){
+            //IE浏览器下用window.event.returnValue = false;实现阻止元素发生默认的行为
+            ev.returnValue = false;
+        }
+        return false;
+    }
+
+    layui.use(['upload','layer','element', 'form', 'admin', 'xnUtil', 'xmSelect', 'laydate', 'cascader'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var xnUtil = layui.xnUtil;
+        var xmSelect = layui.xmSelect;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+        var element = layui.element;
+        var cascader = layui.cascader;
+
+        var editData = admin.getLayerData('#addOrUpdateForm').data;
+
+
+        $(function(){
+            //实现对字符码的截获，keypress中屏蔽了这些功能按键
+            document.onkeypress = banBackSpace;
+            //对功能按键的获取
+            document.onkeydown = banBackSpace;
+        })
+
+
+        // 省市区级联选择
+/*        var cas= cascader.render({
+            elem: '#cascadePicker',
+            data: citysData,
+            itemHeight: '250px',
+            filterable: true,
+            maxSize:1
+        });*/
+
+// 省市区级联选择
+        var pickerbank= cascader.render({
+            elem: '#cascadePickerbank',
+            data: citysData,
+            itemHeight: '250px',
+            filterable: true,
+            maxSize:1
+        });
+
+
+        form.render('select');
+        form.render('radio');
+        pieceUpload('frontCard');
+        pieceUpload('backCard');
+        pieceUpload('businessFront');//营业执照正面
+        pieceUpload('businessAccountLicense');//开户许可正面U
+        pieceUpload('mpPics');//开户许可正面U
+
+        //渲染日期组件
+        laydate.render({ elem: '#test-startDate-1', trigger: 'click' });
+
+        function pieceUpload(name){
+            //常规使用 - 普通图片上传
+            var uploadInst = upload.render({
+                elem: '#'+name+'_upload'
+                ,url: getProjectUrl() + 'sysFileInfo/upload' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
+                ,before: function(obj){
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function(index, file, result){
+                        $('#'+name+'_show').attr('src', result); //图片链接（base64）
+                    });
+
+                    element.progress(name+'_filter', '0%'); //进度条复位
+                    layer.msg('上传中', {icon: 16, time: 0});
+                }
+                ,done: function(res){
+                    //如果上传失败
+                    if(res.code != 200){
+                        return layer.msg('上传失败');
+                    }
+                    $('#'+name).val(res.data);
+                    //上传成功的一些操作
+                    //……
+                    $('#'+name+'Text').html(''); //置空上传失败的状态
+                }
+                ,error: function(){
+                    //演示失败状态，并实现重传
+                    var frontCard_Text = $('#'+name+'_Text');
+                    frontCard_Text.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs '+name+'-reload">重试</a>');
+                    frontCard_Text.find('.'+name+'-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
+                }
+                //进度条
+                ,progress: function(n, elem, e){
+                    element.progress(''+name+'_filter', n + '%'); //可配合 layui 进度条元素使用
+                    if(n == 100){
+                        layer.msg('上传完毕', {icon: 1});
+                    }
+                }
+            });
+        }
+
+/*
+        var statusRenderIns = xmSelect.render({
+            el: '#statusId',
+            name: 'status',
+            data: xnUtil.getDictDataByDictTypeCode('common_status', null),
+            layVerify: 'required',
+            layVerType: 'tips',
+            radio: true,
+            clickClose: true,
+            model: { icon:'hidden', label: { type: 'text' }},
+            prop: {
+                name: 'name',
+                value: 'code'
+            },
+            tips: '请选择状态'
+        }, {async: false});*/
+
+
+
+        form.on('radio(netTypeRadio)', function(data){
+            if(data.value == 'CORP_CODE'){
+                $("#qiye").show();
+            } else {
+                $("#qiye").hide();
+            }
+        });
+
+
+        if(editData !== null && editData !== undefined) {
+            form.val('addOrUpdateForm', editData);
+            //cas.setValue(editData.subUserProvinceCode+","+editData.subUserCityCode+","+editData.subUserDistrictCode)
+            pickerbank.setValue(editData.bankProvinceCode+","+editData.bankCityCode+","+editData.bankDistrictCode)
+            // 下拉赋值
+            //statusRenderIns.setValue([editData.status]);
+            $("#qiye").show();
+           /* if(editData.netType == 'CORP_CODE'){
+                $("#qiye").show();
+            } else {
+                $("#qiye").hide();
+            }*/
+
+            $("#frontCard_show").attr("src",getProjectUrl() + "sysFileInfo/preview?id="+editData.frontCard);
+            $("#backCard_show").attr("src",getProjectUrl() + "sysFileInfo/preview?id="+editData.backCard);
+            if(editData.businessAccountLicense != "")
+            $("#businessAccountLicense_show").attr("src",getProjectUrl() + "sysFileInfo/preview?id="+editData.businessAccountLicense);
+            if(editData.businessFront != "")
+            $("#businessFront_show").attr("src",getProjectUrl() + "sysFileInfo/preview?id="+editData.businessFront);
+            if(editData.scenario != undefined){
+                var sce = JSON.parse(editData.scenario);
+                $("#mpAppid").val(sce.mpAppid);
+                $("#mpPics").val(sce.mpPics);
+                $("#mpPics_show").attr("src",getProjectUrl() + "sysFileInfo/preview?id="+sce.mpPics);
+
+            }
+            admin.req(getProjectUrl() +'mchPiecesInfo/findBankCode?name='+editData.bankName, null, function(res){
+                var bd = editData.bankCode;
+                var resData = res.data;
+                var shtml = '<option value="">请选择</option>';
+                for (const i in resData) {
+                    shtml +='<option value="'+resData[i].code+'">'+resData[i].name+'</option>';
+                }
+                $("#bankCode").html(shtml);
+                $("#bankCode").val(bd);
+                form.render('select','findBankCode');
+                $("#div_findBankCode .layui-form-select").on("keyup",function(){
+                    sel(this);
+                })
+            }, 'post');
+
+        }
+
+        form.on('select(bankCodeFilter)', function (data) {
+            var lab = $(data.elem).find("option:selected")[0].label;
+            $("#bankName").val(lab);
+            $("#div_findBankCode .layui-form-select").find("dl").css({ "display": "none" });
+        });
+        $("#div_findBankCode .layui-form-select").on("keyup",function(){
+            sel(this);
+        })
+        function sel(v){
+            var vname = $(v).find("input").val();
+            admin.req(getProjectUrl() +'mchPiecesInfo/findBankCode?name='+vname, null, function(res){
+                var resData = res.data;
+                var shtml = '<option value="">请选择</option>';
+                for (const i in resData) {
+                    shtml +='<option value="'+resData[i].code+'">'+resData[i].name+'</option>';
+                }
+                $("#bankCode").html(shtml);
+                form.render('select','findBankCode');
+                $("#div_findBankCode .layui-form-select").find("dl").css({ "display": "block" });
+                $("#div_findBankCode .layui-form-select").on("keyup",function(){
+                    sel(this);
+                })
+            }, 'post');
+        }
+        /**
+         * 表单提交事件
+         */
+        form.on('submit(formSubmitBtn)', function (data) {
+            layer.load(2);
+
+            var url = editData ? getProjectUrl() + 'mchPiecesInfo/edit' : getProjectUrl() + 'mchPiecesInfo/add';
+            var fdata = data.field;
+            /*var pc = cas.getValue().split(",");
+            var pl = cas.getLabel().split(" / ");
+            fdata.subUserProvinceCode = pc[0];
+            fdata.subUserCityCode = pc[1];
+            fdata.subUserDistrictCode = pc[2];
+            fdata.subUserProvince = pl[0];
+            fdata.subUserCity = pl[1];
+            fdata.subUserDistrict = pl[2];*/
+
+            var pbv = pickerbank.getValue().split(",");
+            var pbl = pickerbank.getLabel().split(" / ");
+
+            fdata.bankProvinceCode = pbv[0];
+            fdata.bankCityCode = pbv[1];
+            fdata.bankDistrictCode = pbv[2];
+            fdata.bankProvince = pbl[0];
+            fdata.bankCity = pbl[1];
+            fdata.bankDistrict = pbl[2];
+
+
+            admin.req(url, JSON.stringify(fdata), function(res){
+                layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                    admin.putLayerData('formOk', true, '#addOrUpdateForm');
+                    admin.closeDialog('#addOrUpdateForm');
+                });
+            }, 'post');
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vip.xiaonuo.pay.modular.payorder.mapper.PayOrderMapper">
+<select id="totalDayGe" resultType="map">
+    SELECT c.`name`,o.`mch_no`,mch.`mch_name`,
+        DATE_FORMAT(o.create_time, "%Y-%m-%d") create_time,
+        COUNT(1) AS count,
+        ROUND(SUM(amount)/100,2) AS count_amount,
+        ROUND(IFNULL(SUM(CASE WHEN DATE_FORMAT(o.create_time, "%Y-%m-%d") = '${today}' AND state = 2 THEN amount END ),0)/100,2) today_succ_amount ,
+        ROUND(IFNULL(SUM(CASE WHEN DATE_FORMAT(o.create_time, "%Y-%m-%d") = '${yesterday}' AND state = 2 THEN amount END ),0)/100,2) yesterday_succ_amount ,
+        ROUND(IFNULL(SUM(CASE WHEN state = 2 THEN amount END ),0)/100,2) success_amount ,
+        ROUND(IFNULL(SUM(CASE WHEN state != 2 THEN amount END ),0)/100,2) err_amount ,
+        ROUND(IFNULL(SUM(CASE WHEN division_state = 3 THEN division_amount END ),0)/100,2) division_amount_succ ,
+        ROUND(IFNULL(SUM(CASE WHEN division_state != 3 THEN division_amount END ),0)/100,2) division_amount_err ,
+        COUNT(CASE WHEN division_state = 3 THEN 1 END ) division_succ ,
+        COUNT(CASE WHEN division_state != 3 THEN 1 END ) division_err ,
+        COUNT(CASE WHEN state = 2 THEN 1 END ) succ ,
+        COUNT(CASE WHEN state != 2 THEN 1 END ) err
+    FROM xs_pay_order o,xs_pay_channel c,xs_mch_info mch
+    WHERE
+        o.`channel_id`=c.`id` AND mch.`mch_no`=o.`mch_no`
+    <if test="createTime != '' and createTime != null ">
+    AND DATE_FORMAT(o.create_time, "%Y-%m-%d") = #{createTime}
+    </if>
+    GROUP BY c.`name`,o.`mch_no`
+</select>
+</mapper>
