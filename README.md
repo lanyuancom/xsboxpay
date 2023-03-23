@@ -45,8 +45,10 @@
 * 商户平台  http://localhost:81/mch/login  
 <table>
     <tr>
-        <td><img src="./doc/mgr.png"/></td>
-        <td><img src="./doc/mch.png"/></td>
+        <td><img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/mgr.png"/></td>
+           </tr>
+<tr>
+        <td><img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/mch.png"/></td>
     </tr>
 </table>
 ### 说明及后续补充
@@ -58,27 +60,27 @@
 ### 架构原理图
 * 业务架构
 <p align="center">
-    <img src="./doc/yewu.png"/>
+    <img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/yewu.png"/>
 </p>
 
 * 应用架构
 <p align="center">
-    <img src="./doc/yingyong.png"/>
+    <img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/yingyong.png"/>
 </p>
 
 * 数据架构
 <p align="center">
-    <img src="./doc/shuju.png"/>
+    <img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/shuju.png"/>
 </p>
 
 * 技术架构
 <p align="center">
-    <img src="./doc/jishu.png"/>
+    <img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/jishu.png"/>
 </p>
 
 * 部署架构
 <p align="center">
-    <img src="./doc/bushu.png"/>
+    <img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/bushu.png"/>
 </p>
 
 
@@ -86,15 +88,19 @@
 
 <table>
     <tr>
-        <td><img src="./doc/mgr.png"/></td>
-        <td><img src="./doc/mch.png"/></td>
+        <td><img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/mgr.png"/></td>
+            </tr>
+<tr>
+        <td><img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/mch.png"/></td>
     </tr>
 <tr>
-        <td><img src="./doc/view.png"/></td>
-        <td><img src="./doc/orderlist.png"/></td>
+        <td><img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/view.png"/></td>
+        </tr>
+<tr>
+        <td><img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/orderlist.png"/></td>
     </tr>
 <tr>
-        <td><img src="./doc/dakuan.png"/></td>
+        <td><img src="https://gitee.com/lanyuan/xsboxpay/raw/master/doc/dakuan.png"/></td>
     </tr>
 </table>
 
