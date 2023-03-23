@@ -30,6 +30,7 @@
 </p>
 
 ### 快速链接
+* <font color='red'>同步代码 https://gitee.com/lanyuan/xsboxpay </font> 
 * 特别感谢 Snowy 提供基础框架  
 * 如需关注最新动态可加入QQ群聊探讨：434731072
 * 如果我们的产品能满足您的需求，很期待您给我们右上角点个 star
