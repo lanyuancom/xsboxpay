@@ -1,6 +1,6 @@
 <div align="center">
     <p align="center">
-        <img src="[./snowy-base/snowy-system/src/main/webapp/assets/images/xs-box.png](https://gitee.com/lanyuan/xsboxpay/raw/master/snowy-base/snowy-system/src/main/webapp/assets/images/xs-box.png)" height="150" alt="logo"/>
+        <img src="https://gitee.com/lanyuan/xsboxpay/raw/master/snowy-base/snowy-system/src/main/webapp/assets/images/xs-box.png" height="150" alt="logo"/>
     </p>
 </div>
 
